@@ -3,76 +3,95 @@ import { useNavigate } from "react-router-dom";
 
 export default function Register() {
     const navigate = useNavigate();
-    // We maintain all form data in a single state object.
+
     const [form, setForm] = useState({
-        name: "",
+        first_name: "",
+        last_name: "",
         username: "",
         email: "",
         password: "",
         role: "student"
     });
 
-    // Handle input changes dynamically using the 'name' attribute
     function handleChange(e) {
-        setForm({
-            ...form, // Keep existing values (name, email, etc.)
-            [e.target.name]: e.target.value // Update only the changed field
-        });
+        setForm({ ...form, [e.target.name]: e.target.value });
     }
 
-    // ADVANCED: Async/Await
-    // JavaScript is non-blocking (doesn't wait). 'async' tells JS this function will take time.
-    // 'await' pauses this line until the server actually responds.
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // fetch(): The modern way to make HTTP requests.
-            // By default, fetch is GET. We must specify POST to send data.
-            // headers: Tells the backend "I am sending you JSON data".
-            const response = await fetch('http://localhost:8000/api/auth/register/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form), // Transforms JS Object {name: "Parth"} -> String '{"name": "Parth"}'
+            const response = await fetch("http://localhost:8000/api/auth/register/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Registration failed');
+                const err = await response.json();
+                throw new Error(err.message || "Registration failed");
             }
 
-            // Simulate successful registration and redirect
             alert("Registration successful! Redirecting to login...");
             navigate("/login");
         } catch (error) {
-            console.error('Registration error:', error.message);
-            alert('Registration failed: ' + error.message);
+            console.error("Registration error:", error.message);
+            alert("Registration failed: " + error.message);
         }
-    }
+    };
+
+    /* ── Styles ── */
+    const inputStyle = {
+        width: "100%",
+        padding: "10px 12px",
+        borderRadius: "8px",
+        border: "1px solid #2d3448",
+        backgroundColor: "#242938",
+        color: "#e2e8f0",
+        fontSize: "0.9rem",
+        outline: "none",
+        boxSizing: "border-box",
+    };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="p-8 bg-white rounded shadow-md w-96">
-                <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Create Account</h1>
+        <div style={{
+            minHeight: "100vh",
+            backgroundColor: "#0f1117",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "Inter, system-ui, sans-serif",
+        }}>
+            <div style={{
+                width: "100%",
+                maxWidth: "400px",
+                backgroundColor: "#1a1f2e",
+                border: "1px solid #2d3448",
+                borderRadius: "12px",
+                padding: "2rem",
+            }}>
+                <h1 style={{ color: "#e2e8f0", textAlign: "center", marginBottom: "1.5rem", fontSize: "1.4rem", fontWeight: 700 }}>
+                    Create Account
+                </h1>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
 
                     <input
                         type="text"
-                        name="name"
-                        placeholder="Full Name"
-                        value={form.name}
+                        name="first_name"
+                        placeholder="First Name"
+                        value={form.first_name}
                         onChange={handleChange}
-                        className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                        style={inputStyle}
                         required
                     />
 
                     <input
                         type="text"
-                        name="username"
-                        placeholder="Username"
-                        value={form.username}
+                        name="last_name"
+                        placeholder="Last Name"
+                        value={form.last_name}
                         onChange={handleChange}
-                        className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                        style={inputStyle}
                         required
                     />
 
@@ -82,7 +101,17 @@ export default function Register() {
                         placeholder="Email Address"
                         value={form.email}
                         onChange={handleChange}
-                        className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                        style={inputStyle}
+                        required
+                    />
+
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Username"
+                        value={form.username}
+                        onChange={handleChange}
+                        style={inputStyle}
                         required
                     />
 
@@ -92,18 +121,17 @@ export default function Register() {
                         placeholder="Password"
                         value={form.password}
                         onChange={handleChange}
-                        className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                        style={inputStyle}
                         required
                     />
 
-                    {/* Role Dropdown */}
-                    <div className="flex flex-col">
-                        <label className="text-sm text-gray-600 mb-1">I am a:</label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ color: "#718096", fontSize: "0.8rem" }}>I am a:</label>
                         <select
                             name="role"
                             value={form.role}
                             onChange={handleChange}
-                            className="border p-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                            style={{ ...inputStyle, cursor: "pointer" }}
                         >
                             <option value="student">Student</option>
                             <option value="recruiter">Recruiter</option>
@@ -112,14 +140,30 @@ export default function Register() {
 
                     <button
                         type="submit"
-                        className="w-full p-2 bg-green-500 text-white font-semibold rounded hover:bg-green-600 transition duration-200"
+                        style={{
+                            backgroundColor: "#27ae60",
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "8px",
+                            padding: "10px",
+                            fontWeight: 700,
+                            fontSize: "0.95rem",
+                            cursor: "pointer",
+                            marginTop: "4px",
+                            transition: "opacity 0.2s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+                        onMouseLeave={e => e.currentTarget.style.opacity = "1"}
                     >
                         Sign Up
                     </button>
                 </form>
 
-                <p className="mt-4 text-center text-sm text-gray-600">
-                    Already have an account? <span onClick={() => navigate("/login")} className="text-blue-500 cursor-pointer hover:underline">Log in</span>
+                <p style={{ marginTop: "1.2rem", textAlign: "center", color: "#718096", fontSize: "0.85rem" }}>
+                    Already have an account?{" "}
+                    <span onClick={() => navigate("/login")} style={{ color: "#7c9ef8", cursor: "pointer" }}>
+                        Log in
+                    </span>
                 </p>
             </div>
         </div>

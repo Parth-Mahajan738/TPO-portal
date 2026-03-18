@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     
     # Third Party Apps (Likely needed for React integration)
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 

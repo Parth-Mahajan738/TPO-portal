@@ -1,77 +1,97 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Hook for navigation
-
-
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    const navigate = useNavigate(); // Initialize navigation hook
+    const navigate = useNavigate();
 
-    // State management for form inputs.
-    // We use a single object 'form' to hold all fields instead of separate variables.
     const [form, setForm] = useState({
         username: "",
         password: "",
         role: "student"
     });
 
-    // Universal change handler for all inputs.
-    // [e.target.name]: e.target.value -> Dynamic key update based on input's 'name' attribute.
-    // ...form -> Spreads existing state so we don't lose other fields when updating one.
     function handleChange(e) {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value
-        });
+        setForm({ ...form, [e.target.name]: e.target.value });
     }
 
     const handleLogin = async (e) => {
-        // e: Event Object. Contains details about the form submit event.
-        // e.preventDefault(): Crucial! Stops the browser from reloading the page (default HTML behavior).
         e.preventDefault();
         try {
-            // Sending POST request to Django Backend API
-            const response = await fetch('http://localhost:8000/api/auth/login/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form), // Convert JS object to JSON string
+            const response = await fetch("http://localhost:8000/api/auth/login/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Login failed');
+                const err = await response.json();
+                throw new Error(err.message || "Login failed");
             }
 
             const data = await response.json();
 
-            // Storing user role and login status in local storage.
-            // This persists the session even if the user refreshes the page.
             localStorage.setItem("role", data.role);
             localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("token", data.token);
 
-            // Logic to redirect user based on their specific role using 'navigate'
-            // navigate(): React Router's way to change pages without reloading the browser.
-            if (data.role === 'student') {
-                navigate('/student/dashboard');
-            } else if (data.role === 'recruiter') {
-                navigate('/recruiter/post-job');
-            } else if (data.role === 'tpo') {
-                navigate('/admin/results');
-            } else {
-                alert('Unknown role: ' + data.role);
+            // Fetch full profile with the token so we have first_name for the dashboard
+            const profileRes = await fetch("http://localhost:8000/api/auth/profile/", {
+                headers: { "Authorization": `Token ${data.token}` }
+            });
+            if (profileRes.ok) {
+                const profile = await profileRes.json();
+                localStorage.setItem("user", JSON.stringify(profile));
             }
 
+            if (data.role === "student") navigate("/student/dashboard");
+            else if (data.role === "recruiter") navigate("/recruiter/post-job");
+            else if (data.role === "tpo") navigate("/admin/results");
+            else alert("Unknown role: " + data.role);
+
         } catch (error) {
-            console.error('Login error:', error.message);
-            alert('Login failed: ' + error.message);
+            console.error("Login error:", error.message);
+            alert("Login failed: " + error.message);
         }
     };
 
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="p-8 bg-white rounded shadow-md w-96">
-                <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Login Portal</h1>
+    /* ── Styles ── */
+    const inputStyle = {
+        width: "100%",
+        padding: "10px 12px",
+        borderRadius: "8px",
+        border: "1px solid #2d3448",
+        backgroundColor: "#242938",
+        color: "#e2e8f0",
+        fontSize: "0.9rem",
+        outline: "none",
+        boxSizing: "border-box",
+    };
 
-                <form onSubmit={handleLogin} className="flex flex-col gap-4">
+    const roleColors = { student: "#3b6ef8", recruiter: "#27ae60", admin: "#c0392b" };
+    const btnColor = roleColors[form.role] || "#3b6ef8";
+
+    return (
+        <div style={{
+            minHeight: "100vh",
+            backgroundColor: "#0f1117",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "Inter, system-ui, sans-serif",
+        }}>
+            <div style={{
+                width: "100%",
+                maxWidth: "400px",
+                backgroundColor: "#1a1f2e",
+                border: "1px solid #2d3448",
+                borderRadius: "12px",
+                padding: "2rem",
+            }}>
+                <h1 style={{ color: "#e2e8f0", textAlign: "center", marginBottom: "1.5rem", fontSize: "1.4rem", fontWeight: 700 }}>
+                    Login Portal
+                </h1>
+
+                <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
 
                     <input
                         type="text"
@@ -79,7 +99,7 @@ export default function Login() {
                         placeholder="Email or Username"
                         value={form.username}
                         onChange={handleChange}
-                        className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        style={inputStyle}
                         required
                     />
 
@@ -89,18 +109,17 @@ export default function Login() {
                         placeholder="Password"
                         value={form.password}
                         onChange={handleChange}
-                        className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        style={inputStyle}
                         required
                     />
 
-                    {/* Role Dropdown */}
-                    <div className="flex flex-col">
-                        <label className="text-sm text-gray-600 mb-1">I am a:</label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ color: "#718096", fontSize: "0.8rem" }}>I am a:</label>
                         <select
                             name="role"
                             value={form.role}
                             onChange={handleChange}
-                            className="border p-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            style={{ ...inputStyle, cursor: "pointer" }}
                         >
                             <option value="student">Student</option>
                             <option value="recruiter">Recruiter</option>
@@ -108,14 +127,32 @@ export default function Login() {
                         </select>
                     </div>
 
-                    <button className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200 font-semibold">
+                    <button
+                        type="submit"
+                        style={{
+                            backgroundColor: btnColor,
+                            color: "#fff",
+                            border: "none",
+                            borderRadius: "8px",
+                            padding: "10px",
+                            fontWeight: 700,
+                            fontSize: "0.95rem",
+                            cursor: "pointer",
+                            marginTop: "4px",
+                            transition: "opacity 0.2s",
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
+                        onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+                    >
                         Login
                     </button>
-
                 </form>
 
-                <p className="mt-4 text-center text-sm text-gray-600">
-                    Don't have an account? <span onClick={() => navigate('/register')} className="text-blue-500 cursor-pointer hover:underline">Register</span>
+                <p style={{ marginTop: "1.2rem", textAlign: "center", color: "#718096", fontSize: "0.85rem" }}>
+                    Don't have an account?{" "}
+                    <span onClick={() => navigate("/register")} style={{ color: "#7c9ef8", cursor: "pointer" }}>
+                        Register
+                    </span>
                 </p>
             </div>
         </div>
