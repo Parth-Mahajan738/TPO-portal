@@ -7,6 +7,8 @@ import Register from "./Pages/Public/Register";
 // Student Pages
 import StudentDashboard from "./Pages/Student/Dashboard";
 import StudentProfile from "./Pages/Student/Profile";
+import Companies from "./Pages/Student/Companies";
+import Apply from "./Pages/Student/Apply";
 import ApplicationTracker from "./Pages/Student/ApplicationTracker";
 
 // Company/Recruiter Pages
@@ -32,6 +34,8 @@ function App() {
         {/* Student Routes */}
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/student/profile" element={<StudentProfile />} />
+        <Route path="/student/companies" element={<Companies />} />
+        <Route path="/student/apply/:companyId" element={<Apply />} />
         <Route path="/student/applications" element={<ApplicationTracker />} />
 
         {/* Recruiter Routes */}
