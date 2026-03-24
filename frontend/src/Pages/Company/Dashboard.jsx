@@ -4,6 +4,7 @@ import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const RecruiterDashboard = () => {
     const navigate = useNavigate();
+    const [recruiter, setRecruiter] = useState(null);
     const [stats, setStats] = useState({
         activeJobs: 0,
         totalApplications: 0,
@@ -14,9 +15,20 @@ const RecruiterDashboard = () => {
     const [upcomingEvents, setUpcomingEvents] = useState([]);
 
     useEffect(() => {
-        // Load dashboard data from localStorage
+        // Get current recruiter
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            setRecruiter(user);
+            loadDashboardData(user.id || user.email);
+        }
+    }, []);
+
+    const loadDashboardData = (recruiterId) => {
+        // Load only this recruiter's jobs
         const savedJobs = localStorage.getItem("recruiter_jobs");
-        const jobs = savedJobs ? JSON.parse(savedJobs) : [];
+        const allJobs = savedJobs ? JSON.parse(savedJobs) : [];
+        const recruiterJobs = allJobs.filter(job => job.recruiterId === recruiterId);
 
         // Sample data for demonstration
         const sampleApplications = [
@@ -26,22 +38,21 @@ const RecruiterDashboard = () => {
             { id: 4, studentName: "Neha Singh", jobRole: "Software Engineer", status: "Interview Scheduled", appliedDate: "2026-03-15" }
         ];
 
-        const sampleEvents = [
-            { id: 1, name: "Tech Talk - Cloud Technologies", type: "talk", date: "2026-03-25", time: "14:00", location: "Auditorium A" },
-            { id: 2, name: "Online Coding Assessment", type: "test", date: "2026-03-27", time: "10:00", platform: "HackerEarth" },
-            { id: 3, name: "Technical Interview Round 1", type: "interview", date: "2026-03-28", time: "15:00", location: "Meeting Room B" }
-        ];
+        // Load only this recruiter's events
+        const savedEvents = localStorage.getItem("recruiter_events");
+        const allEvents = savedEvents ? JSON.parse(savedEvents) : [];
+        const recruiterEvents = allEvents.filter(event => event.recruiterId === recruiterId);
 
         setStats({
-            activeJobs: jobs.length,
+            activeJobs: recruiterJobs.length,
             totalApplications: sampleApplications.length,
             shortlistedCandidates: sampleApplications.filter(a => ["Shortlisted", "Interview Scheduled"].includes(a.status)).length,
             offersExtended: sampleApplications.filter(a => a.status === "Offer Extended").length
         });
 
         setRecentApplications(sampleApplications);
-        setUpcomingEvents(sampleEvents);
-    }, []);
+        setUpcomingEvents(recruiterEvents.slice(0, 3));
+    };
 
     const getStatusColor = (status) => {
         const colors = {

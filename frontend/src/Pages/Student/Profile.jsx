@@ -60,9 +60,10 @@ const Profile = () => {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
             const studentKey = getStudentStorageKey(parsedUser);
-            // Load existing profile data if available
-            if (studentKey) {
-                loadProfileData(studentKey);
+            // Fallback to ID or email if getStudentStorageKey returns null
+            const key = studentKey || parsedUser.id || parsedUser.email || "guest";
+            if (key) {
+                loadProfileData(key);
             }
         }
     }, []);
@@ -85,7 +86,9 @@ const Profile = () => {
     const saveProfileData = () => {
         if (user) {
             const studentKey = getStudentStorageKey(user);
-            if (!studentKey) {
+            // Fallback to ID or email if getStudentStorageKey returns null
+            const key = studentKey || user.id || user.email || "guest";
+            if (!key || key === "guest") {
                 alert("Unable to identify your account. Please log in again.");
                 return;
             }
@@ -97,7 +100,7 @@ const Profile = () => {
                 projects,
                 workExperience
             };
-            localStorage.setItem(`profile_${studentKey}`, JSON.stringify(profileData));
+            localStorage.setItem(`profile_${key}`, JSON.stringify(profileData));
             setIsEditing(false);
             alert("Profile saved successfully!");
         }

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const PlacementRounds = () => {
+    const navigate = useNavigate();
+    const [recruiter, setRecruiter] = useState(null);
     const [rounds, setRounds] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
@@ -17,40 +19,26 @@ const PlacementRounds = () => {
     const [showDetailModal, setShowDetailModal] = useState(false);
 
     useEffect(() => {
-        const saved = localStorage.getItem("recruiter_rounds");
-        if (saved) {
-            setRounds(JSON.parse(saved));
-        } else {
-            // Sample rounds data
-            const sampleRounds = [
-                {
-                    id: 1,
-                    roundName: "Online Assessment",
-                    roundType: "Technical",
-                    date: "2026-03-25",
-                    time: "10:00",
-                    location: "HackerEarth Platform",
-                    maxCandidates: 50,
-                    description: "Online coding assessment with 5 problems",
-                    status: "Scheduled",
-                    participantCount: 0
-                },
-                {
-                    id: 2,
-                    roundName: "Technical Interview Round 1",
-                    roundType: "Interview",
-                    date: "2026-03-27",
-                    time: "14:00",
-                    location: "Meeting Room A",
-                    maxCandidates: 10,
-                    description: "One-on-one technical interview",
-                    status: "Scheduled",
-                    participantCount: 0
-                }
-            ];
-            setRounds(sampleRounds);
+        // Get current recruiter
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            setRecruiter(user);
+            loadRecruiterRounds(user.id || user.email);
         }
     }, []);
+
+    const loadRecruiterRounds = (recruiterId) => {
+        const allRounds = localStorage.getItem("recruiter_rounds");
+        if (allRounds) {
+            const parsedRounds = JSON.parse(allRounds);
+            // Filter to only show rounds created by this recruiter
+            const recruiterRounds = parsedRounds.filter(round => round.recruiterId === recruiterId);
+            setRounds(recruiterRounds);
+        } else {
+            setRounds([]);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -63,13 +51,18 @@ const PlacementRounds = () => {
         const newRound = {
             id: Date.now(),
             ...formData,
+            recruiterId: recruiter.id || recruiter.email,
             status: "Scheduled",
             participantCount: 0
         };
 
-        const updatedRounds = [...rounds, newRound];
-        setRounds(updatedRounds);
+        const allRounds = localStorage.getItem("recruiter_rounds");
+        const existingRounds = allRounds ? JSON.parse(allRounds) : [];
+        const updatedRounds = [...existingRounds, newRound];
         localStorage.setItem("recruiter_rounds", JSON.stringify(updatedRounds));
+
+        // Update only current recruiter's rounds in state
+        setRounds([...rounds, newRound]);
 
         setFormData({
             roundName: "",
@@ -89,7 +82,8 @@ const PlacementRounds = () => {
             "Interview": "#27ae60",
             "Group Discussion": "#e67e22",
             "HR Round": "#9f7aea",
-            "Assessment": "#e74c3c"
+            "Assessment": "#e74c3c",
+            "Talk Session": "#16a34a"
         };
         return colors[type] || "#718096";
     };
@@ -110,6 +104,13 @@ const PlacementRounds = () => {
     };
 
     const deleteRound = (roundId) => {
+        const allRounds = localStorage.getItem("recruiter_rounds");
+        if (allRounds) {
+            const existingRounds = JSON.parse(allRounds);
+            const updatedAllRounds = existingRounds.filter(r => r.id !== roundId);
+            localStorage.setItem("recruiter_rounds", JSON.stringify(updatedAllRounds));
+        }
+
         setRounds(rounds.filter(r => r.id !== roundId));
         setShowDetailModal(false);
     };
@@ -201,6 +202,7 @@ const PlacementRounds = () => {
                                         <option value="Group Discussion">Group Discussion</option>
                                         <option value="HR Round">HR Round</option>
                                         <option value="Assessment">Assessment</option>
+                                        <option value="Talk Session">Talk Session</option>
                                     </select>
                                 </div>
 
@@ -273,14 +275,13 @@ const PlacementRounds = () => {
 
                                 <div>
                                     <label style={{ display: "block", color: "#e2e8f0", marginBottom: "0.5rem", fontWeight: 500 }}>
-                                        Max Candidates *
+                                        Max Candidates
                                     </label>
                                     <input
                                         type="number"
                                         name="maxCandidates"
                                         value={formData.maxCandidates}
                                         onChange={handleInputChange}
-                                        required
                                         style={{
                                             width: "100%",
                                             padding: "0.75rem",
@@ -290,7 +291,7 @@ const PlacementRounds = () => {
                                             color: "#e2e8f0",
                                             fontSize: "0.95rem"
                                         }}
-                                        placeholder="e.g., 50"
+                                        placeholder="e.g., 50 (optional)"
                                     />
                                 </div>
                             </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const EventScheduling = () => {
+    const [recruiter, setRecruiter] = useState(null);
     const [events, setEvents] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
@@ -18,55 +19,26 @@ const EventScheduling = () => {
     const [submissionMessage, setSubmissionMessage] = useState("");
 
     useEffect(() => {
-        const saved = localStorage.getItem("recruiter_events");
-        if (saved) {
-            setEvents(JSON.parse(saved));
-        } else {
-            // Sample events
-            const sampleEvents = [
-                {
-                    id: 1,
-                    eventName: "Tech Talk - Cloud Technologies",
-                    eventType: "talk",
-                    date: "2026-03-25",
-                    time: "14:00",
-                    location: "Auditorium A",
-                    duration: "60",
-                    speaker: "John Smith",
-                    description: "An introduction to cloud computing and AWS",
-                    capacity: 200,
-                    registrations: 45
-                },
-                {
-                    id: 2,
-                    eventName: "Online Coding Assessment",
-                    eventType: "test",
-                    date: "2026-03-27",
-                    time: "10:00",
-                    location: "HackerEarth Platform",
-                    duration: "180",
-                    speaker: "Recruitment Team",
-                    description: "Online assessment with 5 coding problems",
-                    capacity: 100,
-                    registrations: 67
-                },
-                {
-                    id: 3,
-                    eventName: "Interview Round 1",
-                    eventType: "interview",
-                    date: "2026-03-28",
-                    time: "15:00",
-                    location: "Meeting Rooms A-D",
-                    duration: "30",
-                    speaker: "Tech Team",
-                    description: "One-on-one technical interview round",
-                    capacity: 20,
-                    registrations: 18
-                }
-            ];
-            setEvents(sampleEvents);
+        // Get current recruiter
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            setRecruiter(user);
+            loadRecruiterEvents(user.id || user.email);
         }
     }, []);
+
+    const loadRecruiterEvents = (recruiterId) => {
+        const allEvents = localStorage.getItem("recruiter_events");
+        if (allEvents) {
+            const parsedEvents = JSON.parse(allEvents);
+            // Filter to only show events created by this recruiter
+            const recruiterEvents = parsedEvents.filter(event => event.recruiterId === recruiterId);
+            setEvents(recruiterEvents);
+        } else {
+            setEvents([]);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -79,13 +51,18 @@ const EventScheduling = () => {
         const newEvent = {
             id: Date.now(),
             ...formData,
+            recruiterId: recruiter.id || recruiter.email,
             capacity: parseInt(formData.capacity),
             registrations: 0
         };
 
-        const updatedEvents = [...events, newEvent];
-        setEvents(updatedEvents);
-        localStorage.setItem("recruiter_events", JSON.stringify(updatedEvents));
+        const allEvents = localStorage.getItem("recruiter_events");
+        const existingEvents = allEvents ? JSON.parse(allEvents) : [];
+        const updatedAllEvents = [...existingEvents, newEvent];
+        localStorage.setItem("recruiter_events", JSON.stringify(updatedAllEvents));
+
+        // Update only current recruiter's events in state
+        setEvents([...events, newEvent]);
 
         setSubmissionMessage("Event scheduled successfully! ✓");
         setFormData({

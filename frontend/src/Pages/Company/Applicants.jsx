@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const Applicants = () => {
+    const [recruiter, setRecruiter] = useState(null);
     const [applicants, setApplicants] = useState([]);
     const [filters, setFilters] = useState({
         status: "all",
@@ -12,6 +13,16 @@ const Applicants = () => {
     const [showDetailModal, setShowDetailModal] = useState(false);
 
     useEffect(() => {
+        // Get current recruiter
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            setRecruiter(user);
+            loadApplicants();
+        }
+    }, []);
+
+    const loadApplicants = () => {
         // Sample applicants data
         const sampleApplicants = [
             {
@@ -82,7 +93,7 @@ const Applicants = () => {
         ];
 
         setApplicants(sampleApplicants);
-    }, []);
+    };
 
     const getStatusColor = (status) => {
         const colors = {

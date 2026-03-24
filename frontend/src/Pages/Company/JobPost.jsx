@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const JobPost = () => {
     const navigate = useNavigate();
+    const [recruiter, setRecruiter] = useState(null);
     const [formData, setFormData] = useState({
         jobTitle: "",
         companyName: "",
@@ -17,10 +18,27 @@ const JobPost = () => {
     });
     const [submitMessage, setSubmitMessage] = useState("");
     const [showForm, setShowForm] = useState(true);
-    const [postedJobs, setPostedJobs] = useState(() => {
+    const [postedJobs, setPostedJobs] = useState([]);
+
+    useEffect(() => {
+        // Get current recruiter
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            setRecruiter(user);
+            loadRecruiterJobs(user.id || user.email);
+        }
+    }, []);
+
+    const loadRecruiterJobs = (recruiterId) => {
         const saved = localStorage.getItem("recruiter_jobs");
-        return saved ? JSON.parse(saved) : [];
-    });
+        if (saved) {
+            const allJobs = JSON.parse(saved);
+            // Filter to only show jobs posted by this recruiter
+            const recruiterJobs = allJobs.filter(job => job.recruiterId === recruiterId);
+            setPostedJobs(recruiterJobs);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -32,12 +50,17 @@ const JobPost = () => {
 
         const newJob = {
             id: Date.now(),
-            ...formData
+            ...formData,
+            recruiterId: recruiter.id || recruiter.email
         };
 
-        const updatedJobs = [...postedJobs, newJob];
-        setPostedJobs(updatedJobs);
-        localStorage.setItem("recruiter_jobs", JSON.stringify(updatedJobs));
+        const allJobs = localStorage.getItem("recruiter_jobs");
+        const existingJobs = allJobs ? JSON.parse(allJobs) : [];
+        const updatedAllJobs = [...existingJobs, newJob];
+        localStorage.setItem("recruiter_jobs", JSON.stringify(updatedAllJobs));
+
+        // Update only current recruiter's jobs in state
+        setPostedJobs([...postedJobs, newJob]);
 
         setSubmitMessage("Job posted successfully! ✓");
         setFormData({
