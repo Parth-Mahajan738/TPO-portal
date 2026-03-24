@@ -8,7 +8,7 @@ const ApplicationTracker = () => {
     const [user, setUser] = useState(null);
     const [applications, setApplications] = useState([]);
     const [filteredApplications, setFilteredApplications] = useState([]);
-    const [filterStatus, setFilterStatus] = "all";
+    const [filterStatus, setFilterStatus] = useState("all");
     const [selectedApplication, setSelectedApplication] = useState(null);
 
     useEffect(() => {
@@ -141,7 +141,7 @@ const ApplicationTracker = () => {
     };
 
     const handleFilterChange = (status) => {
-        setFilterStatus = status;
+        setFilterStatus(status);
         if (status === "all") {
             setFilteredApplications(applications);
         } else {

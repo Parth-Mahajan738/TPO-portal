@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const Applicants = () => {
-    const [recruiter, setRecruiter] = useState(null);
     const [applicants, setApplicants] = useState([]);
     const [filters, setFilters] = useState({
         status: "all",
