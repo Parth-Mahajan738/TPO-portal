@@ -17,6 +17,7 @@ const StudentDashboard = () => {
     const [upcomingDrives, setUpcomingDrives] = useState([]);
     const [recentApplications, setRecentApplications] = useState([]);
     const [profileCompletion, setProfileCompletion] = useState(0);
+    const [expandedCard, setExpandedCard] = useState(null);
 
     // useEffect runs once when the component first renders (mounts).
     // We read the profile from localStorage — it was saved there right after login.
@@ -87,10 +88,33 @@ const StudentDashboard = () => {
     };
 
     const menuItems = [
-        { id: "profile", label: "My Profile", icon: "👤", description: "Manage your personal info, education, and documents", path: "/student/profile", color: "#3182ce" },
-        { id: "companies", label: "Browse Companies", icon: "🏢", description: "View and apply to companies visiting campus", path: "/student/companies", color: "#38a169" },
-        { id: "applications", label: "My Applications", icon: "📋", description: "Track status of your job applications", path: "/student/applications", color: "#805ad5" }
+        { id: "profile", label: "My Profile", description: "Manage your personal info, education, and documents", path: "/student/profile", color: "#3b6ef8" },
+        { id: "companies", label: "Browse Companies", description: "View and apply to companies visiting campus", path: "/student/companies", color: "#27ae60" },
+        { id: "applications", label: "My Applications", description: "Track status of your job applications", path: "/student/applications", color: "#9f7aea" }
     ];
+
+    const StatCard = ({ label, value, color, icon }) => (
+        <div
+            onMouseEnter={() => setExpandedCard(label)}
+            onMouseLeave={() => setExpandedCard(null)}
+            style={{
+                backgroundColor: "#1a1f2e",
+                padding: "1.5rem",
+                borderRadius: "0.75rem",
+                border: "1px solid #2d3448",
+                transition: "all 0.3s ease",
+                transform: expandedCard === label ? "translateY(-4px)" : "translateY(0)",
+                boxShadow: expandedCard === label ? "0 10px 20px rgba(59, 110, 248, 0.1)" : "none"
+            }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div>
+                        <p style={{ fontSize: "0.875rem", color: "#a0aec0", marginBottom: "0.5rem" }}>{label}</p>
+                        <p style={{ fontSize: "2rem", fontWeight: 700, color: color }}>{value}</p>
+                    </div>
+                    <span style={{ fontSize: "2rem", opacity: 0.3 }}>{icon}</span>
+                </div>
+            </div>
+    );
 
     return (
         <div style={{ minHeight: "100vh", backgroundColor: "#0f1117", display: "flex" }}>
@@ -101,7 +125,7 @@ const StudentDashboard = () => {
                 {/* Welcome Section */}
                 <div style={{ marginBottom: "2rem" }}>
                     <h1 style={{ fontSize: "1.875rem", fontWeight: 700, color: "#e2e8f0", marginBottom: "0.5rem" }}>
-                        Student Dashboard
+                        Welcome back, {user?.first_name || "Student"}! 👋
                     </h1>
                     <p style={{ color: "#718096" }}>
                         Track your placement journey, apply to companies, and manage your profile.
@@ -110,42 +134,10 @@ const StudentDashboard = () => {
 
                 {/* Stats Cards */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.5rem", marginBottom: "2rem" }}>
-                    <div style={{ backgroundColor: "#1a1f2e", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid #2d3448" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                            <div style={{ fontSize: "2rem" }}>📝</div>
-                            <div>
-                                <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>Total Applications</p>
-                                <p style={{ fontSize: "1.875rem", fontWeight: 700, color: "#e2e8f0" }}>{stats.totalApplications}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{ backgroundColor: "#1a1f2e", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid #2d3448" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                            <div style={{ fontSize: "2rem" }}>⭐</div>
-                            <div>
-                                <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>Shortlisted</p>
-                                <p style={{ fontSize: "1.875rem", fontWeight: 700, color: "#48bb78" }}>{stats.shortlisted}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{ backgroundColor: "#1a1f2e", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid #2d3448" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                            <div style={{ fontSize: "2rem" }}>🎉</div>
-                            <div>
-                                <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>Offers Received</p>
-                                <p style={{ fontSize: "1.875rem", fontWeight: 700, color: "#9f7aea" }}>{stats.offers}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{ backgroundColor: "#1a1f2e", padding: "1.5rem", borderRadius: "0.75rem", border: "1px solid #2d3448" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                            <div style={{ fontSize: "2rem" }}>⏳</div>
-                            <div>
-                                <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>Pending Review</p>
-                                <p style={{ fontSize: "1.875rem", fontWeight: 700, color: "#ed8936" }}>{stats.pending}</p>
-                            </div>
-                        </div>
-                    </div>
+                    <StatCard label="Total Applications" value={stats.totalApplications} color="#3b6ef8" icon="📝" />
+                    <StatCard label="Shortlisted" value={stats.shortlisted} color="#27ae60" icon="⭐" />
+                    <StatCard label="Offers Received" value={stats.offers} color="#9f7aea" icon="🎉" />
+                    <StatCard label="Pending Review" value={stats.pending} color="#ed8936" icon="⏳" />
                 </div>
 
                 {/* Main Grid */}
@@ -153,7 +145,7 @@ const StudentDashboard = () => {
                     {/* Quick Actions */}
                     <div style={{ backgroundColor: "#1a1f2e", borderRadius: "0.75rem", padding: "1.5rem", border: "1px solid #2d3448" }}>
                         <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1.5rem" }}>
-                            Quick Actions
+                            🚀 Quick Actions
                         </h2>
                         <div style={{ display: "grid", gap: "1rem" }}>
                             {menuItems.map(item => (
@@ -174,26 +166,22 @@ const StudentDashboard = () => {
                                         width: "100%"
                                     }}
                                     onMouseEnter={e => {
-                                        e.currentTarget.style.borderColor = "#3b6ef8";
+                                        e.currentTarget.style.borderColor = item.color;
                                         e.currentTarget.style.backgroundColor = "#2d3448";
+                                        e.currentTarget.style.transform = "translateX(4px)";
                                     }}
                                     onMouseLeave={e => {
                                         e.currentTarget.style.borderColor = "#2d3448";
                                         e.currentTarget.style.backgroundColor = "#242938";
+                                        e.currentTarget.style.transform = "translateX(0)";
                                     }}
                                 >
                                     <div style={{
-                                        width: "48px",
+                                        width: "8px",
                                         height: "48px",
                                         backgroundColor: item.color,
-                                        borderRadius: "0.75rem",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: "1.5rem"
-                                    }}>
-                                        {item.icon}
-                                    </div>
+                                        borderRadius: "4px"
+                                    }} />
                                     <div>
                                         <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.25rem" }}>
                                             {item.label}
@@ -208,11 +196,11 @@ const StudentDashboard = () => {
                     {/* Profile Completion */}
                     <div style={{ backgroundColor: "#1a1f2e", borderRadius: "0.75rem", padding: "1.5rem", border: "1px solid #2d3448" }}>
                         <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1.5rem" }}>
-                            Profile Completion
+                            📋 Profile Completion
                         </h2>
                         <div style={{ marginBottom: "1.5rem" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                                <span style={{ fontSize: "0.875rem", color: "#a0aec0" }}>Completion</span>
+                                <span style={{ fontSize: "0.875rem", color: "#a0aec0" }}>Progress</span>
                                 <span style={{ fontSize: "0.875rem", fontWeight: 600, color: profileCompletion === 100 ? "#48bb78" : "#3b6ef8" }}>
                                     {profileCompletion}%
                                 </span>
@@ -237,18 +225,11 @@ const StudentDashboard = () => {
                             ].map((item, idx) => (
                                 <div key={idx} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                                     <span style={{
-                                        width: "20px",
-                                        height: "20px",
+                                        width: "8px",
+                                        height: "8px",
                                         borderRadius: "50%",
-                                        backgroundColor: item.complete ? "#48bb78" : "#2d3448",
-                                        color: "white",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: "0.75rem"
-                                    }}>
-                                        {item.complete ? "✓" : ""}
-                                    </span>
+                                        backgroundColor: item.complete ? "#27ae60" : "#4a5568"
+                                    }} />
                                     <span style={{ fontSize: "0.875rem", color: item.complete ? "#e2e8f0" : "#718096" }}>
                                         {item.label}
                                     </span>
@@ -275,7 +256,7 @@ const StudentDashboard = () => {
                                 onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
                                 onMouseLeave={e => e.currentTarget.style.opacity = "1"}
                             >
-                                Complete Your Profile
+                                Complete Your Profile →
                             </button>
                         )}
                     </div>
@@ -284,7 +265,7 @@ const StudentDashboard = () => {
                     <div style={{ backgroundColor: "#1a1f2e", borderRadius: "0.75rem", padding: "1.5rem", border: "1px solid #2d3448" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                             <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#e2e8f0" }}>
-                                Recent Applications
+                                📤 Recent Applications
                             </h2>
                             <button
                                 onClick={() => navigate("/student/applications")}
@@ -293,8 +274,12 @@ const StudentDashboard = () => {
                                     border: "none",
                                     color: "#3b6ef8",
                                     cursor: "pointer",
-                                    fontSize: "0.875rem"
+                                    fontSize: "0.875rem",
+                                    fontWeight: 500,
+                                    transition: "color 0.2s"
                                 }}
+                                onMouseEnter={e => e.currentTarget.style.color = "#5a7cff"}
+                                onMouseLeave={e => e.currentTarget.style.color = "#3b6ef8"}
                             >
                                 View All →
                             </button>
@@ -312,7 +297,17 @@ const StudentDashboard = () => {
                                             alignItems: "center",
                                             padding: "1rem",
                                             backgroundColor: "#242938",
-                                            borderRadius: "0.5rem"
+                                            borderRadius: "0.5rem",
+                                            transition: "all 0.2s",
+                                            cursor: "pointer"
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.backgroundColor = "#2d3448";
+                                            e.currentTarget.style.borderLeft = "3px solid #3b6ef8";
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.backgroundColor = "#242938";
+                                            e.currentTarget.style.borderLeft = "none";
                                         }}
                                     >
                                         <div>
@@ -343,7 +338,7 @@ const StudentDashboard = () => {
                     <div style={{ backgroundColor: "#1a1f2e", borderRadius: "0.75rem", padding: "1.5rem", border: "1px solid #2d3448" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                             <h2 style={{ fontSize: "1.25rem", fontWeight: 600, color: "#e2e8f0" }}>
-                                Upcoming Drives
+                                🎯 Upcoming Drives
                             </h2>
                             <button
                                 onClick={() => navigate("/student/companies")}
@@ -352,40 +347,52 @@ const StudentDashboard = () => {
                                     border: "none",
                                     color: "#3b6ef8",
                                     cursor: "pointer",
-                                    fontSize: "0.875rem"
+                                    fontSize: "0.875rem",
+                                    fontWeight: 500,
+                                    transition: "color 0.2s"
                                 }}
+                                onMouseEnter={e => e.currentTarget.style.color = "#5a7cff"}
+                                onMouseLeave={e => e.currentTarget.style.color = "#3b6ef8"}
                             >
                                 View All →
                             </button>
                         </div>
 
                         <div style={{ display: "grid", gap: "0.75rem" }}>
-                            {upcomingDrives.map(drive => (
-                                <div
-                                    key={drive.id}
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        padding: "1rem",
-                                        backgroundColor: "#242938",
-                                        borderRadius: "0.5rem"
-                                    }}
-                                >
-                                    <div>
-                                        <p style={{ fontWeight: 500, color: "#e2e8f0", marginBottom: "0.25rem" }}>{drive.companyName}</p>
-                                        <p style={{ fontSize: "0.75rem", color: "#a0aec0" }}>{drive.jobRole} • {drive.location}</p>
+                            {upcomingDrives.map(drive => {
+                                const daysLeft = Math.ceil((new Date(drive.driveDate) - new Date()) / (1000 * 60 * 60 * 24));
+                                return (
+                                    <div
+                                        key={drive.id}
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            padding: "1rem",
+                                            backgroundColor: "#242938",
+                                            borderRadius: "0.5rem",
+                                            transition: "all 0.2s",
+                                            cursor: "pointer",
+                                            borderLeft: daysLeft <= 2 ? "3px solid #e74c3c" : "none"
+                                        }}
+                                        onMouseEnter={e => e.currentTarget.style.backgroundColor = "#2d3448"}
+                                        onMouseLeave={e => e.currentTarget.style.backgroundColor = "#242938"}
+                                    >
+                                        <div>
+                                            <p style={{ fontWeight: 500, color: "#e2e8f0", marginBottom: "0.25rem" }}>{drive.companyName}</p>
+                                            <p style={{ fontSize: "0.75rem", color: "#a0aec0" }}>{drive.jobRole} • {drive.location}</p>
+                                        </div>
+                                        <div style={{ textAlign: "right" }}>
+                                            <p style={{ fontSize: "0.875rem", color: daysLeft <= 2 ? "#e74c3c" : "#fc8181", fontWeight: 500 }}>
+                                                {new Date(drive.driveDate).toLocaleDateString()}
+                                            </p>
+                                            <p style={{ fontSize: "0.75rem", color: "#718096" }}>
+                                                {daysLeft} days left
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div style={{ textAlign: "right" }}>
-                                        <p style={{ fontSize: "0.875rem", color: "#fc8181", fontWeight: 500 }}>
-                                            {new Date(drive.driveDate).toLocaleDateString()}
-                                        </p>
-                                        <p style={{ fontSize: "0.75rem", color: "#718096" }}>
-                                            {Math.ceil((new Date(drive.driveDate) - new Date()) / (1000 * 60 * 60 * 24))} days left
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

@@ -12,8 +12,11 @@ import Apply from "./Pages/Student/Apply";
 import ApplicationTracker from "./Pages/Student/ApplicationTracker";
 
 // Company/Recruiter Pages
+import RecruiterDashboard from "./Pages/Company/Dashboard";
 import JobPost from "./Pages/Company/JobPost";
 import Applicants from "./Pages/Company/Applicants";
+import PlacementRounds from "./Pages/Company/Rounds";
+import EventScheduling from "./Pages/Company/Events";
 
 // Admin Pages
 import ManageCompanies from "./Pages/TPOAdmin/Manage";
@@ -39,8 +42,11 @@ function App() {
         <Route path="/student/applications" element={<ApplicationTracker />} />
 
         {/* Recruiter Routes */}
+        <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
         <Route path="/recruiter/post-job" element={<JobPost />} />
         <Route path="/recruiter/applicants" element={<Applicants />} />
+        <Route path="/recruiter/rounds" element={<PlacementRounds />} />
+        <Route path="/recruiter/events" element={<EventScheduling />} />
 
         {/* Admin Routes */}
         <Route path="/admin/companies" element={<ManageCompanies />} />
