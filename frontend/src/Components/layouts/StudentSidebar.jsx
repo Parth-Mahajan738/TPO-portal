@@ -1,6 +1,53 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+// Professional SVG Icons
+const Icons = {
+    dashboard: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+    ),
+    profile: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+    ),
+    companies: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+    ),
+    applications: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+    ),
+    logout: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+    ),
+    menu: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    )
+};
+
 const StudentSidebar = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -23,10 +70,10 @@ const StudentSidebar = () => {
     };
 
     const menuItems = [
-        { id: "dashboard", label: "Dashboard", icon: "📊", path: "/student/dashboard" },
-        { id: "profile", label: "My Profile", icon: "👤", path: "/student/profile" },
-        { id: "companies", label: "Companies", icon: "🏢", path: "/student/companies" },
-        { id: "applications", label: "Applications", icon: "📋", path: "/student/applications" }
+        { id: "dashboard", label: "Dashboard", Icon: Icons.dashboard, path: "/student/dashboard" },
+        { id: "profile", label: "My Profile", Icon: Icons.profile, path: "/student/profile" },
+        { id: "companies", label: "Companies", Icon: Icons.companies, path: "/student/companies" },
+        { id: "applications", label: "Applications", Icon: Icons.applications, path: "/student/applications" }
     ];
 
     const isActive = (path) => location.pathname === path;
@@ -111,41 +158,13 @@ const StudentSidebar = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        transition: "color 0.2s",
-                        flexDirection: "column",
-                        gap: "4px"
+                        transition: "color 0.2s"
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.color = "#e2e8f0"}
                     onMouseLeave={(e) => e.currentTarget.style.color = "#718096"}
                     title={isCollapsed ? "Expand" : "Collapse"}
                 >
-                    <span
-                        style={{
-                            display: "block",
-                            width: "16px",
-                            height: "2px",
-                            backgroundColor: "currentColor",
-                            borderRadius: "1px"
-                        }}
-                    />
-                    <span
-                        style={{
-                            display: "block",
-                            width: "16px",
-                            height: "2px",
-                            backgroundColor: "currentColor",
-                            borderRadius: "1px"
-                        }}
-                    />
-                    <span
-                        style={{
-                            display: "block",
-                            width: "16px",
-                            height: "2px",
-                            backgroundColor: "currentColor",
-                            borderRadius: "1px"
-                        }}
-                    />
+                    <Icons.menu />
                 </button>
             </div>
 
@@ -221,44 +240,47 @@ const StudentSidebar = () => {
                     overflowY: "auto"
                 }}
             >
-                {menuItems.map((item) => (
-                    <button
-                        key={item.id}
-                        onClick={() => navigate(item.path)}
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.75rem",
-                            padding: isCollapsed ? "0.75rem" : "0.875rem 1rem",
-                            backgroundColor: isActive(item.path) ? "#3b6ef8" : "transparent",
-                            color: isActive(item.path) ? "#fff" : "#a0aec0",
-                            border: "none",
-                            borderRadius: "8px",
-                            cursor: "pointer",
-                            fontSize: "0.9rem",
-                            fontWeight: isActive(item.path) ? 600 : 500,
-                            transition: "all 0.2s ease",
-                            justifyContent: isCollapsed ? "center" : "flex-start",
-                            whiteSpace: "nowrap"
-                        }}
-                        onMouseEnter={(e) => {
-                            if (!isActive(item.path)) {
-                                e.currentTarget.style.backgroundColor = "#242938";
-                                e.currentTarget.style.color = "#e2e8f0";
-                            }
-                        }}
-                        onMouseLeave={(e) => {
-                            if (!isActive(item.path)) {
-                                e.currentTarget.style.backgroundColor = "transparent";
-                                e.currentTarget.style.color = "#a0aec0";
-                            }
-                        }}
-                        title={isCollapsed ? item.label : ""}
-                    >
-                        <span style={{ fontSize: "1.25rem" }}>{item.icon}</span>
-                        {!isCollapsed && <span>{item.label}</span>}
-                    </button>
-                ))}
+                {menuItems.map((item) => {
+                    const IconComponent = item.Icon;
+                    return (
+                        <button
+                            key={item.id}
+                            onClick={() => navigate(item.path)}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.75rem",
+                                padding: isCollapsed ? "0.75rem" : "0.875rem 1rem",
+                                backgroundColor: isActive(item.path) ? "#3b6ef8" : "transparent",
+                                color: isActive(item.path) ? "#fff" : "#a0aec0",
+                                border: "none",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                                fontSize: "0.9rem",
+                                fontWeight: isActive(item.path) ? 600 : 500,
+                                transition: "all 0.2s ease",
+                                justifyContent: isCollapsed ? "center" : "flex-start",
+                                whiteSpace: "nowrap"
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActive(item.path)) {
+                                    e.currentTarget.style.backgroundColor = "#242938";
+                                    e.currentTarget.style.color = "#e2e8f0";
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActive(item.path)) {
+                                    e.currentTarget.style.backgroundColor = "transparent";
+                                    e.currentTarget.style.color = "#a0aec0";
+                                }
+                            }}
+                            title={isCollapsed ? item.label : ""}
+                        >
+                            <IconComponent />
+                            {!isCollapsed && <span>{item.label}</span>}
+                        </button>
+                    );
+                })}
             </nav>
 
             {/* Logout Button */}
@@ -272,20 +294,28 @@ const StudentSidebar = () => {
                         justifyContent: isCollapsed ? "center" : "flex-start",
                         gap: "0.75rem",
                         padding: isCollapsed ? "0.75rem" : "0.875rem 1rem",
-                        backgroundColor: "#c0392b",
-                        color: "#fff",
-                        border: "none",
+                        backgroundColor: "transparent",
+                        color: "#a0aec0",
+                        border: "1px solid #2d3448",
                         borderRadius: "8px",
                         cursor: "pointer",
                         fontSize: "0.9rem",
-                        fontWeight: 600,
-                        transition: "background-color 0.2s"
+                        fontWeight: 500,
+                        transition: "all 0.2s"
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#e74c3c"}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#c0392b"}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#c0392b";
+                        e.currentTarget.style.color = "#fff";
+                        e.currentTarget.style.borderColor = "#c0392b";
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "#a0aec0";
+                        e.currentTarget.style.borderColor = "#2d3448";
+                    }}
                     title={isCollapsed ? "Logout" : ""}
                 >
-                    <span style={{ fontSize: "1.25rem" }}>🚪</span>
+                    <Icons.logout />
                     {!isCollapsed && <span>Logout</span>}
                 </button>
             </div>

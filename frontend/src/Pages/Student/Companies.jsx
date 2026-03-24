@@ -182,8 +182,6 @@ const Companies = () => {
         setFilteredCompanies(filtered);
     }, [searchTerm, filters, companies]);
 
-
-
     const handleApply = (companyId) => {
         navigate(`/student/apply/${companyId}`);
     };
@@ -225,11 +223,11 @@ const Companies = () => {
 
                 {/* Search and Filters */}
                 <div style={{
-                    backgroundColor: "white",
+                    backgroundColor: "#1a1f2e",
                     borderRadius: "0.75rem",
                     padding: "1.5rem",
                     marginBottom: "1.5rem",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+                    border: "1px solid #2d3448"
                 }}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                         <div>
@@ -238,26 +236,14 @@ const Companies = () => {
                                 placeholder="Search companies, roles, skills..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{
-                                    width: "100%",
-                                    padding: "0.75rem",
-                                    border: "1px solid #e2e8f0",
-                                    borderRadius: "0.5rem",
-                                    fontSize: "0.875rem"
-                                }}
+                                style={inputStyle}
                             />
                         </div>
                         <div>
                             <select
                                 value={filters.jobType}
                                 onChange={(e) => setFilters({ ...filters, jobType: e.target.value })}
-                                style={{
-                                    width: "100%",
-                                    padding: "0.75rem",
-                                    border: "1px solid #e2e8f0",
-                                    borderRadius: "0.5rem",
-                                    fontSize: "0.875rem"
-                                }}
+                                style={inputStyle}
                             >
                                 <option value="all">All Job Types</option>
                                 <option value="Full-time">Full-time</option>
@@ -269,13 +255,7 @@ const Companies = () => {
                             <select
                                 value={filters.ctcRange}
                                 onChange={(e) => setFilters({ ...filters, ctcRange: e.target.value })}
-                                style={{
-                                    width: "100%",
-                                    padding: "0.75rem",
-                                    border: "1px solid #e2e8f0",
-                                    borderRadius: "0.5rem",
-                                    fontSize: "0.875rem"
-                                }}
+                                style={inputStyle}
                             >
                                 <option value="all">All CTC Ranges</option>
                                 <option value="0-8">Below 8 LPA</option>
@@ -293,20 +273,20 @@ const Companies = () => {
                         <div
                             key={company.id}
                             style={{
-                                backgroundColor: "white",
+                                backgroundColor: "#1a1f2e",
                                 borderRadius: "0.75rem",
                                 padding: "1.5rem",
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                                border: "1px solid #2d3448",
                                 cursor: "pointer",
                                 transition: "transform 0.2s, box-shadow 0.2s"
                             }}
                             onMouseEnter={e => {
                                 e.currentTarget.style.transform = "translateY(-4px)";
-                                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
                             }}
                             onMouseLeave={e => {
                                 e.currentTarget.style.transform = "translateY(0)";
-                                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+                                e.currentTarget.style.boxShadow = "none";
                             }}
                             onClick={() => setSelectedCompany(company)}
                         >
@@ -314,7 +294,7 @@ const Companies = () => {
                                 <div style={{
                                     width: "60px",
                                     height: "60px",
-                                    backgroundColor: "#3182ce",
+                                    backgroundColor: "#3b6ef8",
                                     borderRadius: "0.75rem",
                                     display: "flex",
                                     alignItems: "center",
@@ -326,15 +306,15 @@ const Companies = () => {
                                     {company.logo}
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.25rem" }}>
+                                    <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.25rem" }}>
                                         {company.name}
                                     </h3>
-                                    <p style={{ fontSize: "0.875rem", color: "#718096" }}>{company.industry}</p>
+                                    <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>{company.industry}</p>
                                 </div>
                             </div>
 
                             <div style={{ marginBottom: "1rem" }}>
-                                <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "#2d3748", marginBottom: "0.25rem" }}>
+                                <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "#e2e8f0", marginBottom: "0.25rem" }}>
                                     {company.jobRole}
                                 </p>
                                 <p style={{ fontSize: "0.75rem", color: "#718096" }}>{company.location}</p>
@@ -346,8 +326,8 @@ const Companies = () => {
                                         key={idx}
                                         style={{
                                             padding: "0.25rem 0.5rem",
-                                            backgroundColor: "#ebf8ff",
-                                            color: "#2b6cb0",
+                                            backgroundColor: "#242938",
+                                            color: "#a0aec0",
                                             borderRadius: "0.25rem",
                                             fontSize: "0.75rem"
                                         }}
@@ -364,11 +344,11 @@ const Companies = () => {
 
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                                 <div>
-                                    <p style={{ fontSize: "1.125rem", fontWeight: 700, color: "#38a169" }}>{company.ctc}</p>
+                                    <p style={{ fontSize: "1.125rem", fontWeight: 700, color: "#48bb78" }}>{company.ctc}</p>
                                     <p style={{ fontSize: "0.75rem", color: "#718096" }}>CTC per annum</p>
                                 </div>
                                 <div style={{ textAlign: "right" }}>
-                                    <p style={{ fontSize: "0.875rem", color: "#e53e3e", fontWeight: 500 }}>
+                                    <p style={{ fontSize: "0.875rem", color: "#fc8181", fontWeight: 500 }}>
                                         Deadline: {new Date(company.deadline).toLocaleDateString()}
                                     </p>
                                     <p style={{ fontSize: "0.75rem", color: "#718096" }}>
@@ -385,13 +365,13 @@ const Companies = () => {
                                 style={{
                                     width: "100%",
                                     padding: "0.75rem",
-                                    backgroundColor: isEligible(company) ? "#3182ce" : "#a0aec0",
+                                    backgroundColor: isEligible(company) ? "#3b6ef8" : "#4a5568",
                                     color: "white",
                                     border: "none",
-                                    borderRadius: "0.5rem",
+                                    borderRadius: "8px",
                                     cursor: isEligible(company) ? "pointer" : "not-allowed",
                                     fontSize: "0.875rem",
-                                    fontWeight: 500
+                                    fontWeight: 600
                                 }}
                                 disabled={!isEligible(company)}
                             >
@@ -417,7 +397,7 @@ const Companies = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        backgroundColor: "rgba(0,0,0,0.5)",
+                        backgroundColor: "rgba(0,0,0,0.7)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -428,13 +408,14 @@ const Companies = () => {
                 >
                     <div
                         style={{
-                            backgroundColor: "white",
+                            backgroundColor: "#1a1f2e",
                             borderRadius: "1rem",
                             maxWidth: "700px",
                             width: "100%",
                             maxHeight: "90vh",
                             overflow: "auto",
-                            padding: "2rem"
+                            padding: "2rem",
+                            border: "1px solid #2d3448"
                         }}
                         onClick={e => e.stopPropagation()}
                     >
@@ -443,7 +424,7 @@ const Companies = () => {
                                 <div style={{
                                     width: "70px",
                                     height: "70px",
-                                    backgroundColor: "#3182ce",
+                                    backgroundColor: "#3b6ef8",
                                     borderRadius: "1rem",
                                     display: "flex",
                                     alignItems: "center",
@@ -455,8 +436,8 @@ const Companies = () => {
                                     {selectedCompany.logo}
                                 </div>
                                 <div>
-                                    <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#2d3748" }}>{selectedCompany.name}</h2>
-                                    <p style={{ color: "#718096" }}>{selectedCompany.industry}</p>
+                                    <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#e2e8f0" }}>{selectedCompany.name}</h2>
+                                    <p style={{ color: "#a0aec0" }}>{selectedCompany.industry}</p>
                                 </div>
                             </div>
                             <button
@@ -475,61 +456,61 @@ const Companies = () => {
 
                         <div style={{ display: "grid", gap: "1.5rem" }}>
                             <div>
-                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.5rem" }}>About</h3>
-                                <p style={{ color: "#4a5568", fontSize: "0.875rem", lineHeight: 1.6 }}>{selectedCompany.description}</p>
+                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.5rem" }}>About</h3>
+                                <p style={{ color: "#a0aec0", fontSize: "0.875rem", lineHeight: 1.6 }}>{selectedCompany.description}</p>
                             </div>
 
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                                <div style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "0.5rem" }}>
+                                <div style={{ backgroundColor: "#242938", padding: "1rem", borderRadius: "0.5rem" }}>
                                     <p style={{ fontSize: "0.75rem", color: "#718096", marginBottom: "0.25rem" }}>Job Role</p>
-                                    <p style={{ fontWeight: 600, color: "#2d3748" }}>{selectedCompany.jobRole}</p>
+                                    <p style={{ fontWeight: 600, color: "#e2e8f0" }}>{selectedCompany.jobRole}</p>
                                 </div>
-                                <div style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "0.5rem" }}>
+                                <div style={{ backgroundColor: "#242938", padding: "1rem", borderRadius: "0.5rem" }}>
                                     <p style={{ fontSize: "0.75rem", color: "#718096", marginBottom: "0.25rem" }}>Job Type</p>
-                                    <p style={{ fontWeight: 600, color: "#2d3748" }}>{selectedCompany.jobType}</p>
+                                    <p style={{ fontWeight: 600, color: "#e2e8f0" }}>{selectedCompany.jobType}</p>
                                 </div>
-                                <div style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "0.5rem" }}>
+                                <div style={{ backgroundColor: "#242938", padding: "1rem", borderRadius: "0.5rem" }}>
                                     <p style={{ fontSize: "0.75rem", color: "#718096", marginBottom: "0.25rem" }}>CTC</p>
-                                    <p style={{ fontWeight: 600, color: "#38a169" }}>{selectedCompany.ctc}</p>
+                                    <p style={{ fontWeight: 600, color: "#48bb78" }}>{selectedCompany.ctc}</p>
                                 </div>
-                                <div style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "0.5rem" }}>
+                                <div style={{ backgroundColor: "#242938", padding: "1rem", borderRadius: "0.5rem" }}>
                                     <p style={{ fontSize: "0.75rem", color: "#718096", marginBottom: "0.25rem" }}>Base Salary</p>
-                                    <p style={{ fontWeight: 600, color: "#2d3748" }}>{selectedCompany.baseSalary}</p>
+                                    <p style={{ fontWeight: 600, color: "#e2e8f0" }}>{selectedCompany.baseSalary}</p>
                                 </div>
                             </div>
 
                             <div>
-                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.5rem" }}>Eligibility Criteria</h3>
+                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.5rem" }}>Eligibility Criteria</h3>
                                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem" }}>
-                                    <div style={{ backgroundColor: "#ebf8ff", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                                        <p style={{ fontSize: "0.75rem", color: "#2b6cb0" }}>CGPA</p>
-                                        <p style={{ fontWeight: 600, color: "#2c5282" }}>{selectedCompany.eligibility.cgpa}+</p>
+                                    <div style={{ backgroundColor: "#242938", padding: "0.75rem", borderRadius: "0.5rem" }}>
+                                        <p style={{ fontSize: "0.75rem", color: "#718096" }}>CGPA</p>
+                                        <p style={{ fontWeight: 600, color: "#e2e8f0" }}>{selectedCompany.eligibility.cgpa}+</p>
                                     </div>
-                                    <div style={{ backgroundColor: "#ebf8ff", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                                        <p style={{ fontSize: "0.75rem", color: "#2b6cb0" }}>10th %</p>
-                                        <p style={{ fontWeight: 600, color: "#2c5282" }}>{selectedCompany.eligibility.tenth}%+</p>
+                                    <div style={{ backgroundColor: "#242938", padding: "0.75rem", borderRadius: "0.5rem" }}>
+                                        <p style={{ fontSize: "0.75rem", color: "#718096" }}>10th %</p>
+                                        <p style={{ fontWeight: 600, color: "#e2e8f0" }}>{selectedCompany.eligibility.tenth}%+</p>
                                     </div>
-                                    <div style={{ backgroundColor: "#ebf8ff", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                                        <p style={{ fontSize: "0.75rem", color: "#2b6cb0" }}>12th %</p>
-                                        <p style={{ fontWeight: 600, color: "#2c5282" }}>{selectedCompany.eligibility.twelfth}%+</p>
+                                    <div style={{ backgroundColor: "#242938", padding: "0.75rem", borderRadius: "0.5rem" }}>
+                                        <p style={{ fontSize: "0.75rem", color: "#718096" }}>12th %</p>
+                                        <p style={{ fontWeight: 600, color: "#e2e8f0" }}>{selectedCompany.eligibility.twelfth}%+</p>
                                     </div>
-                                    <div style={{ backgroundColor: "#ebf8ff", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                                        <p style={{ fontSize: "0.75rem", color: "#2b6cb0" }}>Backlogs</p>
-                                        <p style={{ fontWeight: 600, color: "#2c5282" }}>{selectedCompany.eligibility.backlog}</p>
+                                    <div style={{ backgroundColor: "#242938", padding: "0.75rem", borderRadius: "0.5rem" }}>
+                                        <p style={{ fontSize: "0.75rem", color: "#718096" }}>Backlogs</p>
+                                        <p style={{ fontWeight: 600, color: "#e2e8f0" }}>{selectedCompany.eligibility.backlog}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div>
-                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.5rem" }}>Required Skills</h3>
+                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.5rem" }}>Required Skills</h3>
                                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                                     {selectedCompany.skills.map((skill, idx) => (
                                         <span
                                             key={idx}
                                             style={{
                                                 padding: "0.375rem 0.75rem",
-                                                backgroundColor: "#e2e8f0",
-                                                color: "#4a5568",
+                                                backgroundColor: "#242938",
+                                                color: "#a0aec0",
                                                 borderRadius: "9999px",
                                                 fontSize: "0.875rem"
                                             }}
@@ -541,7 +522,7 @@ const Companies = () => {
                             </div>
 
                             <div>
-                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.5rem" }}>Selection Process</h3>
+                                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.5rem" }}>Selection Process</h3>
                                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                                     {selectedCompany.rounds.map((round, idx) => (
                                         <div
@@ -551,14 +532,14 @@ const Companies = () => {
                                                 alignItems: "center",
                                                 gap: "0.75rem",
                                                 padding: "0.75rem",
-                                                backgroundColor: "#f7fafc",
+                                                backgroundColor: "#242938",
                                                 borderRadius: "0.5rem"
                                             }}
                                         >
                                             <span style={{
                                                 width: "24px",
                                                 height: "24px",
-                                                backgroundColor: "#3182ce",
+                                                backgroundColor: "#3b6ef8",
                                                 color: "white",
                                                 borderRadius: "50%",
                                                 display: "flex",
@@ -569,7 +550,7 @@ const Companies = () => {
                                             }}>
                                                 {idx + 1}
                                             </span>
-                                            <span style={{ color: "#4a5568" }}>{round}</span>
+                                            <span style={{ color: "#a0aec0" }}>{round}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -581,10 +562,10 @@ const Companies = () => {
                                     style={{
                                         flex: 1,
                                         padding: "0.875rem",
-                                        backgroundColor: isEligible(selectedCompany) ? "#3182ce" : "#a0aec0",
+                                        backgroundColor: isEligible(selectedCompany) ? "#3b6ef8" : "#4a5568",
                                         color: "white",
                                         border: "none",
-                                        borderRadius: "0.5rem",
+                                        borderRadius: "8px",
                                         cursor: isEligible(selectedCompany) ? "pointer" : "not-allowed",
                                         fontSize: "1rem",
                                         fontWeight: 600
@@ -597,10 +578,10 @@ const Companies = () => {
                                     onClick={() => setSelectedCompany(null)}
                                     style={{
                                         padding: "0.875rem 1.5rem",
-                                        backgroundColor: "#e2e8f0",
-                                        color: "#4a5568",
-                                        border: "none",
-                                        borderRadius: "0.5rem",
+                                        backgroundColor: "#242938",
+                                        color: "#a0aec0",
+                                        border: "1px solid #2d3448",
+                                        borderRadius: "8px",
                                         cursor: "pointer",
                                         fontSize: "1rem",
                                         fontWeight: 500

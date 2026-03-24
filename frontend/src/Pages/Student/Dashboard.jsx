@@ -3,6 +3,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import StudentSidebar from "../../Components/layouts/StudentSidebar";
+import { getStudentStorageKey } from "../../Utils/studentStorageKey";
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
@@ -26,13 +27,16 @@ const StudentDashboard = () => {
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
-            loadDashboardData(parsedUser.id);
+            const studentKey = getStudentStorageKey(parsedUser);
+            if (studentKey) {
+                loadDashboardData(studentKey);
+            }
         }
     }, []); // Empty array [] means: run this only once, on first render
 
-    const loadDashboardData = (userId) => {
+    const loadDashboardData = (studentKey) => {
         // Load applications
-        const savedApplications = localStorage.getItem(`applications_${userId}`);
+        const savedApplications = localStorage.getItem(`applications_${studentKey}`);
         const applications = savedApplications ? JSON.parse(savedApplications) : [];
 
         // Sample data for demonstration
@@ -60,7 +64,7 @@ const StudentDashboard = () => {
         ]);
 
         // Calculate profile completion
-        const savedProfile = localStorage.getItem(`profile_${userId}`);
+        const savedProfile = localStorage.getItem(`profile_${studentKey}`);
         if (savedProfile) {
             const profile = JSON.parse(savedProfile);
             let completion = 0;

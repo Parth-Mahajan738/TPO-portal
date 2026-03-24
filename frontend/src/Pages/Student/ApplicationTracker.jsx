@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import StudentSidebar from "../../Components/layouts/StudentSidebar";
+import { getStudentStorageKey } from "../../Utils/studentStorageKey";
 
 const ApplicationTracker = () => {
     const navigate = useNavigate();
@@ -15,13 +16,16 @@ const ApplicationTracker = () => {
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
-            loadApplications(parsedUser.id);
+            const studentKey = getStudentStorageKey(parsedUser);
+            if (studentKey) {
+                loadApplications(studentKey);
+            }
         }
     }, []);
 
-    const loadApplications = (userId) => {
+    const loadApplications = (studentKey) => {
         // Load from localStorage (in real app, fetch from backend)
-        const savedApplications = localStorage.getItem(`applications_${userId}`);
+        const savedApplications = localStorage.getItem(`applications_${studentKey}`);
         if (savedApplications) {
             const apps = JSON.parse(savedApplications);
             // Add some sample data for demonstration

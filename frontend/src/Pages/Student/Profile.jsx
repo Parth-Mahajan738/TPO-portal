@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import StudentSidebar from "../../Components/layouts/StudentSidebar";
+import { getStudentStorageKey } from "../../Utils/studentStorageKey";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -58,15 +59,18 @@ const Profile = () => {
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
+            const studentKey = getStudentStorageKey(parsedUser);
             // Load existing profile data if available
-            loadProfileData(parsedUser.id);
+            if (studentKey) {
+                loadProfileData(studentKey);
+            }
         }
     }, []);
 
-    const loadProfileData = (userId) => {
+    const loadProfileData = (studentKey) => {
         // In a real app, this would fetch from backend
         // For now, we'll use sample data or localStorage
-        const savedProfile = localStorage.getItem(`profile_${userId}`);
+        const savedProfile = localStorage.getItem(`profile_${studentKey}`);
         if (savedProfile) {
             const data = JSON.parse(savedProfile);
             setPersonalInfo(data.personalInfo || personalInfo);
@@ -80,6 +84,11 @@ const Profile = () => {
 
     const saveProfileData = () => {
         if (user) {
+            const studentKey = getStudentStorageKey(user);
+            if (!studentKey) {
+                alert("Unable to identify your account. Please log in again.");
+                return;
+            }
             const profileData = {
                 personalInfo,
                 education,
@@ -88,7 +97,7 @@ const Profile = () => {
                 projects,
                 workExperience
             };
-            localStorage.setItem(`profile_${user.id}`, JSON.stringify(profileData));
+            localStorage.setItem(`profile_${studentKey}`, JSON.stringify(profileData));
             setIsEditing(false);
             alert("Profile saved successfully!");
         }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import StudentSidebar from "../../Components/layouts/StudentSidebar";
+import { getStudentStorageKey } from "../../Utils/studentStorageKey";
 
 const Apply = () => {
     const navigate = useNavigate();
@@ -43,13 +44,16 @@ const Apply = () => {
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
             setUser(parsedUser);
-            loadProfileData(parsedUser.id);
+            const studentKey = getStudentStorageKey(parsedUser);
+            if (studentKey) {
+                loadProfileData(studentKey);
+            }
         }
         loadCompanyData();
     }, [companyId]);
 
-    const loadProfileData = (userId) => {
-        const savedProfile = localStorage.getItem(`profile_${userId}`);
+    const loadProfileData = (studentKey) => {
+        const savedProfile = localStorage.getItem(`profile_${studentKey}`);
         if (savedProfile) {
             const data = JSON.parse(savedProfile);
             setProfileData({
@@ -157,8 +161,15 @@ const Apply = () => {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1500));
 
+        const studentKey = getStudentStorageKey(user);
+        if (!studentKey) {
+            setIsSubmitting(false);
+            alert("Unable to identify your account. Please log in again.");
+            return;
+        }
+
         // Save application to localStorage
-        const applications = JSON.parse(localStorage.getItem(`applications_${user.id}`) || "[]");
+        const applications = JSON.parse(localStorage.getItem(`applications_${studentKey}`) || "[]");
         applications.push({
             id: Date.now(),
             companyId: company.id,
@@ -168,7 +179,7 @@ const Apply = () => {
             status: "Applied",
             applicationData: applicationData
         });
-        localStorage.setItem(`applications_${user.id}`, JSON.stringify(applications));
+        localStorage.setItem(`applications_${studentKey}`, JSON.stringify(applications));
 
         setIsSubmitting(false);
         setSubmitSuccess(true);
