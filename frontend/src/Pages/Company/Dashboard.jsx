@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const RecruiterDashboard = () => {
+    const [recruiter, setRecruiter] = useState(null);
     const [stats, setStats] = useState({
         activeJobs: 0,
         totalApplications: 0,

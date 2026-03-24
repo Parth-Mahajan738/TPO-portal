@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const PlacementRounds = () => {
-    const navigate = useNavigate();
     const [recruiter, setRecruiter] = useState(null);
     const [rounds, setRounds] = useState([]);
     const [showForm, setShowForm] = useState(false);
