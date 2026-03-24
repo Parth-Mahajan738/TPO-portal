@@ -174,7 +174,7 @@ const Profile = () => {
                     { label: "Date of Birth", key: "dateOfBirth", type: "date" }
                 ].map(field => (
                     <div key={field.key}>
-                        <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
+                        <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.5rem" }}>
                             {field.label}
                         </label>
                         {isEditing ? (
@@ -185,14 +185,16 @@ const Profile = () => {
                                 style={{
                                     width: "100%",
                                     padding: "0.625rem",
-                                    border: "1px solid #e2e8f0",
+                                    border: "1px solid #2d3448",
                                     borderRadius: "0.5rem",
-                                    fontSize: "0.875rem"
+                                    fontSize: "0.875rem",
+                                    backgroundColor: "#242938",
+                                    color: "#e2e8f0"
                                 }}
                             />
                         ) : (
-                            <p style={{ padding: "0.625rem", backgroundColor: "#f7fafc", borderRadius: "0.5rem", fontSize: "0.875rem" }}>
-                                {personalInfo[field.key] || "Not provided"}
+                            <p style={{ padding: "0.625rem", backgroundColor: "#242938", borderRadius: "0.5rem", fontSize: "0.875rem", color: "#e2e8f0" }}>
+                                {personalInfo[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
                             </p>
                         )}
                     </div>
@@ -200,7 +202,7 @@ const Profile = () => {
             </div>
 
             <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.5rem" }}>
                     Gender
                 </label>
                 {isEditing ? (
@@ -211,9 +213,11 @@ const Profile = () => {
                             width: "100%",
                             maxWidth: "250px",
                             padding: "0.625rem",
-                            border: "1px solid #e2e8f0",
+                            border: "1px solid #2d3448",
                             borderRadius: "0.5rem",
-                            fontSize: "0.875rem"
+                            fontSize: "0.875rem",
+                            backgroundColor: "#242938",
+                            color: "#e2e8f0"
                         }}
                     >
                         <option value="">Select Gender</option>
@@ -223,14 +227,14 @@ const Profile = () => {
                         <option value="prefer-not-to-say">Prefer not to say</option>
                     </select>
                 ) : (
-                    <p style={{ padding: "0.625rem", backgroundColor: "#f7fafc", borderRadius: "0.5rem", fontSize: "0.875rem", maxWidth: "250px" }}>
-                        {personalInfo.gender || "Not provided"}
+                    <p style={{ padding: "0.625rem", backgroundColor: "#242938", borderRadius: "0.5rem", fontSize: "0.875rem", maxWidth: "250px", color: "#e2e8f0" }}>
+                        {personalInfo.gender || <span style={{ color: "#718096" }}>Not provided</span>}
                     </p>
                 )}
             </div>
 
             <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
+                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.5rem" }}>
                     Address
                 </label>
                 {isEditing ? (
@@ -241,15 +245,17 @@ const Profile = () => {
                         style={{
                             width: "100%",
                             padding: "0.625rem",
-                            border: "1px solid #e2e8f0",
+                            border: "1px solid #2d3448",
                             borderRadius: "0.5rem",
                             fontSize: "0.875rem",
-                            resize: "vertical"
+                            resize: "vertical",
+                            backgroundColor: "#242938",
+                            color: "#e2e8f0"
                         }}
                     />
                 ) : (
-                    <p style={{ padding: "0.625rem", backgroundColor: "#f7fafc", borderRadius: "0.5rem", fontSize: "0.875rem" }}>
-                        {personalInfo.address || "Not provided"}
+                    <p style={{ padding: "0.625rem", backgroundColor: "#242938", borderRadius: "0.5rem", fontSize: "0.875rem", color: "#e2e8f0" }}>
+                        {personalInfo.address || <span style={{ color: "#718096" }}>Not provided</span>}
                     </p>
                 )}
             </div>
@@ -261,7 +267,7 @@ const Profile = () => {
                     { label: "Pincode", key: "pincode" }
                 ].map(field => (
                     <div key={field.key}>
-                        <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
+                        <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.5rem" }}>
                             {field.label}
                         </label>
                         {isEditing ? (
@@ -272,14 +278,16 @@ const Profile = () => {
                                 style={{
                                     width: "100%",
                                     padding: "0.625rem",
-                                    border: "1px solid #e2e8f0",
+                                    border: "1px solid #2d3448",
                                     borderRadius: "0.5rem",
-                                    fontSize: "0.875rem"
+                                    fontSize: "0.875rem",
+                                    backgroundColor: "#242938",
+                                    color: "#e2e8f0"
                                 }}
                             />
                         ) : (
-                            <p style={{ padding: "0.625rem", backgroundColor: "#f7fafc", borderRadius: "0.5rem", fontSize: "0.875rem" }}>
-                                {personalInfo[field.key] || "Not provided"}
+                            <p style={{ padding: "0.625rem", backgroundColor: "#242938", borderRadius: "0.5rem", fontSize: "0.875rem", color: "#e2e8f0" }}>
+                                {personalInfo[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
                             </p>
                         )}
                     </div>
@@ -293,7 +301,7 @@ const Profile = () => {
                     { label: "Portfolio Website", key: "portfolio" }
                 ].map(field => (
                     <div key={field.key}>
-                        <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
+                        <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.5rem" }}>
                             {field.label}
                         </label>
                         {isEditing ? (
@@ -305,18 +313,20 @@ const Profile = () => {
                                 style={{
                                     width: "100%",
                                     padding: "0.625rem",
-                                    border: "1px solid #e2e8f0",
+                                    border: "1px solid #2d3448",
                                     borderRadius: "0.5rem",
-                                    fontSize: "0.875rem"
+                                    fontSize: "0.875rem",
+                                    backgroundColor: "#242938",
+                                    color: "#e2e8f0"
                                 }}
                             />
                         ) : (
-                            <p style={{ padding: "0.625rem", backgroundColor: "#f7fafc", borderRadius: "0.5rem", fontSize: "0.875rem" }}>
+                            <p style={{ padding: "0.625rem", backgroundColor: "#242938", borderRadius: "0.5rem", fontSize: "0.875rem", color: "#e2e8f0" }}>
                                 {personalInfo[field.key] ? (
-                                    <a href={personalInfo[field.key]} target="_blank" rel="noopener noreferrer" style={{ color: "#3182ce" }}>
+                                    <a href={personalInfo[field.key]} target="_blank" rel="noopener noreferrer" style={{ color: "#3b6ef8" }}>
                                         {personalInfo[field.key]}
                                     </a>
-                                ) : "Not provided"}
+                                ) : <span style={{ color: "#718096" }}>Not provided</span>}
                             </p>
                         )}
                     </div>
@@ -328,8 +338,8 @@ const Profile = () => {
     const renderEducation = () => (
         <div style={{ display: "grid", gap: "2rem" }}>
             {/* 10th Standard */}
-            <div style={{ backgroundColor: "#f7fafc", padding: "1.5rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>10th Standard</h3>
+            <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>10th Standard</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                     {[
                         { label: "Board", key: "board" },
@@ -338,7 +348,7 @@ const Profile = () => {
                         { label: "Year of Passing", key: "yearOfPassing" }
                     ].map(field => (
                         <div key={field.key}>
-                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#718096", marginBottom: "0.25rem" }}>
+                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.25rem" }}>
                                 {field.label}
                             </label>
                             {isEditing ? (
@@ -352,14 +362,16 @@ const Profile = () => {
                                     style={{
                                         width: "100%",
                                         padding: "0.5rem",
-                                        border: "1px solid #e2e8f0",
+                                        border: "1px solid #2d3448",
                                         borderRadius: "0.375rem",
-                                        fontSize: "0.875rem"
+                                        fontSize: "0.875rem",
+                                        backgroundColor: "#1a1f2e",
+                                        color: "#e2e8f0"
                                     }}
                                 />
                             ) : (
-                                <p style={{ fontSize: "0.875rem", color: "#2d3748" }}>
-                                    {education.tenth[field.key] || "Not provided"}
+                                <p style={{ fontSize: "0.875rem", color: "#e2e8f0" }}>
+                                    {education.tenth[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
                                 </p>
                             )}
                         </div>
@@ -368,8 +380,8 @@ const Profile = () => {
             </div>
 
             {/* 12th Standard */}
-            <div style={{ backgroundColor: "#f7fafc", padding: "1.5rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>12th Standard / Diploma</h3>
+            <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>12th Standard / Diploma</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                     {[
                         { label: "Board", key: "board" },
@@ -378,7 +390,7 @@ const Profile = () => {
                         { label: "Year of Passing", key: "yearOfPassing" }
                     ].map(field => (
                         <div key={field.key}>
-                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#718096", marginBottom: "0.25rem" }}>
+                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.25rem" }}>
                                 {field.label}
                             </label>
                             {isEditing ? (
@@ -392,14 +404,16 @@ const Profile = () => {
                                     style={{
                                         width: "100%",
                                         padding: "0.5rem",
-                                        border: "1px solid #e2e8f0",
+                                        border: "1px solid #2d3448",
                                         borderRadius: "0.375rem",
-                                        fontSize: "0.875rem"
+                                        fontSize: "0.875rem",
+                                        backgroundColor: "#1a1f2e",
+                                        color: "#e2e8f0"
                                     }}
                                 />
                             ) : (
-                                <p style={{ fontSize: "0.875rem", color: "#2d3748" }}>
-                                    {education.twelfth[field.key] || "Not provided"}
+                                <p style={{ fontSize: "0.875rem", color: "#e2e8f0" }}>
+                                    {education.twelfth[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
                                 </p>
                             )}
                         </div>
@@ -408,8 +422,8 @@ const Profile = () => {
             </div>
 
             {/* Graduation */}
-            <div style={{ backgroundColor: "#f7fafc", padding: "1.5rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>Graduation (Current)</h3>
+            <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>Graduation (Current)</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                     {[
                         { label: "Degree", key: "degree" },
@@ -422,7 +436,7 @@ const Profile = () => {
                         { label: "Active Backlogs", key: "backlogCount" }
                     ].map(field => (
                         <div key={field.key}>
-                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#718096", marginBottom: "0.25rem" }}>
+                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.25rem" }}>
                                 {field.label}
                             </label>
                             {isEditing ? (
@@ -436,14 +450,16 @@ const Profile = () => {
                                     style={{
                                         width: "100%",
                                         padding: "0.5rem",
-                                        border: "1px solid #e2e8f0",
+                                        border: "1px solid #2d3448",
                                         borderRadius: "0.375rem",
-                                        fontSize: "0.875rem"
+                                        fontSize: "0.875rem",
+                                        backgroundColor: "#1a1f2e",
+                                        color: "#e2e8f0"
                                     }}
                                 />
                             ) : (
-                                <p style={{ fontSize: "0.875rem", color: "#2d3748" }}>
-                                    {education.graduation[field.key] || "Not provided"}
+                                <p style={{ fontSize: "0.875rem", color: "#e2e8f0" }}>
+                                    {education.graduation[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
                                 </p>
                             )}
                         </div>
@@ -456,7 +472,7 @@ const Profile = () => {
     const renderSkills = () => (
         <div style={{ display: "grid", gap: "1.5rem" }}>
             <div>
-                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>Technical Skills</h3>
+                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>Technical Skills</h3>
                 {isEditing && (
                     <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
                         <input
@@ -468,16 +484,18 @@ const Profile = () => {
                             style={{
                                 flex: 1,
                                 padding: "0.625rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.5rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#242938",
+                                color: "#e2e8f0"
                             }}
                         />
                         <button
                             onClick={addSkill}
                             style={{
                                 padding: "0.625rem 1rem",
-                                backgroundColor: "#3182ce",
+                                backgroundColor: "#3b6ef8",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "0.5rem",
@@ -498,10 +516,11 @@ const Profile = () => {
                                 alignItems: "center",
                                 gap: "0.5rem",
                                 padding: "0.5rem 1rem",
-                                backgroundColor: "#ebf8ff",
-                                color: "#2b6cb0",
+                                backgroundColor: "#242938",
+                                color: "#3b6ef8",
                                 borderRadius: "9999px",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                border: "1px solid #2d3448"
                             }}
                         >
                             {skill}
@@ -511,7 +530,7 @@ const Profile = () => {
                                     style={{
                                         background: "none",
                                         border: "none",
-                                        color: "#2b6cb0",
+                                        color: "#3b6ef8",
                                         cursor: "pointer",
                                         fontSize: "1rem",
                                         lineHeight: 1
@@ -528,7 +547,7 @@ const Profile = () => {
             </div>
 
             <div>
-                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>Certifications</h3>
+                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>Certifications</h3>
                 {isEditing && (
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.5rem", marginBottom: "1rem" }}>
                         <input
@@ -538,9 +557,11 @@ const Profile = () => {
                             placeholder="Certification Name"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#242938",
+                                color: "#e2e8f0"
                             }}
                         />
                         <input
@@ -550,9 +571,11 @@ const Profile = () => {
                             placeholder="Issuing Organization"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#242938",
+                                color: "#e2e8f0"
                             }}
                         />
                         <input
@@ -562,16 +585,18 @@ const Profile = () => {
                             placeholder="Year"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#242938",
+                                color: "#e2e8f0"
                             }}
                         />
                         <button
                             onClick={addCertification}
                             style={{
                                 padding: "0.5rem 1rem",
-                                backgroundColor: "#3182ce",
+                                backgroundColor: "#3b6ef8",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "0.375rem",
@@ -592,12 +617,12 @@ const Profile = () => {
                                 justifyContent: "space-between",
                                 alignItems: "center",
                                 padding: "1rem",
-                                backgroundColor: "#f7fafc",
+                                backgroundColor: "#242938",
                                 borderRadius: "0.5rem"
                             }}
                         >
                             <div>
-                                <p style={{ fontWeight: 500, color: "#2d3748" }}>{cert.name}</p>
+                                <p style={{ fontWeight: 500, color: "#e2e8f0" }}>{cert.name}</p>
                                 <p style={{ fontSize: "0.875rem", color: "#718096" }}>{cert.issuer} • {cert.year}</p>
                             </div>
                             {isEditing && (
@@ -626,8 +651,8 @@ const Profile = () => {
     const renderProjects = () => (
         <div style={{ display: "grid", gap: "1.5rem" }}>
             {isEditing && (
-                <div style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "0.75rem" }}>
-                    <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.75rem" }}>Add New Project</h4>
+                <div style={{ backgroundColor: "#242938", padding: "1rem", borderRadius: "0.75rem" }}>
+                    <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.75rem" }}>Add New Project</h4>
                     <div style={{ display: "grid", gap: "0.5rem" }}>
                         <input
                             type="text"
@@ -636,9 +661,11 @@ const Profile = () => {
                             placeholder="Project Title"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <textarea
@@ -648,10 +675,12 @@ const Profile = () => {
                             rows="2"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
                                 fontSize: "0.875rem",
-                                resize: "vertical"
+                                resize: "vertical",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <input
@@ -661,9 +690,11 @@ const Profile = () => {
                             placeholder="Technologies Used (comma separated)"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <input
@@ -673,16 +704,18 @@ const Profile = () => {
                             placeholder="Project Link (GitHub/Live Demo)"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <button
                             onClick={addProject}
                             style={{
                                 padding: "0.5rem 1rem",
-                                backgroundColor: "#3182ce",
+                                backgroundColor: "#3b6ef8",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "0.375rem",
@@ -703,13 +736,13 @@ const Profile = () => {
                         key={project.id}
                         style={{
                             padding: "1.25rem",
-                            backgroundColor: "#f7fafc",
+                            backgroundColor: "#242938",
                             borderRadius: "0.75rem",
-                            border: "1px solid #e2e8f0"
+                            border: "1px solid #2d3448"
                         }}
                     >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                            <h4 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748" }}>{project.title}</h4>
+                            <h4 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0" }}>{project.title}</h4>
                             {isEditing && (
                                 <button
                                     onClick={() => removeProject(project.id)}
@@ -725,17 +758,17 @@ const Profile = () => {
                                 </button>
                             )}
                         </div>
-                        <p style={{ fontSize: "0.875rem", color: "#4a5568", marginBottom: "0.75rem" }}>{project.description}</p>
+                        <p style={{ fontSize: "0.875rem", color: "#a0aec0", marginBottom: "0.75rem" }}>{project.description}</p>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.75rem" }}>
                             {project.technologies.split(",").map((tech, idx) => (
                                 <span
                                     key={idx}
                                     style={{
                                         padding: "0.25rem 0.5rem",
-                                        backgroundColor: "#e2e8f0",
+                                        backgroundColor: "#1a1f2e",
                                         borderRadius: "0.25rem",
                                         fontSize: "0.75rem",
-                                        color: "#4a5568"
+                                        color: "#a0aec0"
                                     }}
                                 >
                                     {tech.trim()}
@@ -747,7 +780,7 @@ const Profile = () => {
                                 href={project.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                style={{ fontSize: "0.875rem", color: "#3182ce" }}
+                                style={{ fontSize: "0.875rem", color: "#3b6ef8" }}
                             >
                                 View Project →
                             </a>
@@ -765,8 +798,8 @@ const Profile = () => {
     const renderExperience = () => (
         <div style={{ display: "grid", gap: "1.5rem" }}>
             {isEditing && (
-                <div style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "0.75rem" }}>
-                    <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.75rem" }}>Add Work Experience</h4>
+                <div style={{ backgroundColor: "#242938", padding: "1rem", borderRadius: "0.75rem" }}>
+                    <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.75rem" }}>Add Work Experience</h4>
                     <div style={{ display: "grid", gap: "0.5rem" }}>
                         <input
                             type="text"
@@ -775,9 +808,11 @@ const Profile = () => {
                             placeholder="Company Name"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <input
@@ -787,9 +822,11 @@ const Profile = () => {
                             placeholder="Job Title/Role"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <input
@@ -799,9 +836,11 @@ const Profile = () => {
                             placeholder="Duration (e.g., Jan 2023 - Jun 2023)"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <textarea
@@ -811,17 +850,19 @@ const Profile = () => {
                             rows="2"
                             style={{
                                 padding: "0.5rem",
-                                border: "1px solid #e2e8f0",
+                                border: "1px solid #2d3448",
                                 borderRadius: "0.375rem",
                                 fontSize: "0.875rem",
-                                resize: "vertical"
+                                resize: "vertical",
+                                backgroundColor: "#1a1f2e",
+                                color: "#e2e8f0"
                             }}
                         />
                         <button
                             onClick={addExperience}
                             style={{
                                 padding: "0.5rem 1rem",
-                                backgroundColor: "#3182ce",
+                                backgroundColor: "#3b6ef8",
                                 color: "white",
                                 border: "none",
                                 borderRadius: "0.375rem",
@@ -842,15 +883,15 @@ const Profile = () => {
                         key={exp.id}
                         style={{
                             padding: "1.25rem",
-                            backgroundColor: "#f7fafc",
+                            backgroundColor: "#242938",
                             borderRadius: "0.75rem",
-                            border: "1px solid #e2e8f0"
+                            border: "1px solid #2d3448"
                         }}
                     >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
                             <div>
-                                <h4 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748" }}>{exp.role}</h4>
-                                <p style={{ fontSize: "0.875rem", color: "#3182ce" }}>{exp.company}</p>
+                                <h4 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0" }}>{exp.role}</h4>
+                                <p style={{ fontSize: "0.875rem", color: "#3b6ef8" }}>{exp.company}</p>
                             </div>
                             {isEditing && (
                                 <button
@@ -868,7 +909,7 @@ const Profile = () => {
                             )}
                         </div>
                         <p style={{ fontSize: "0.875rem", color: "#718096", marginBottom: "0.5rem" }}>{exp.duration}</p>
-                        <p style={{ fontSize: "0.875rem", color: "#4a5568" }}>{exp.description}</p>
+                        <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>{exp.description}</p>
                     </div>
                 )) : (
                     <p style={{ color: "#718096", fontSize: "0.875rem", textAlign: "center", padding: "2rem" }}>
@@ -882,12 +923,12 @@ const Profile = () => {
     const renderDocuments = () => (
         <div style={{ display: "grid", gap: "2rem" }}>
             {/* Resume Upload */}
-            <div style={{ backgroundColor: "#f7fafc", padding: "1.5rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>Resume</h3>
-                <div style={{ border: "2px dashed #cbd5e0", borderRadius: "0.75rem", padding: "2rem", textAlign: "center" }}>
+            <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>Resume</h3>
+                <div style={{ border: "2px dashed #2d3448", borderRadius: "0.75rem", padding: "2rem", textAlign: "center" }}>
                     {resume ? (
                         <div>
-                            <p style={{ color: "#2d3748", marginBottom: "0.5rem" }}>📄 {resume.name}</p>
+                            <p style={{ color: "#e2e8f0", marginBottom: "0.5rem" }}>{resume.name}</p>
                             <p style={{ fontSize: "0.875rem", color: "#718096" }}>
                                 Size: {(resume.size / 1024).toFixed(2)} KB
                             </p>
@@ -915,7 +956,7 @@ const Profile = () => {
                                 style={{
                                     display: "inline-block",
                                     padding: "0.625rem 1.25rem",
-                                    backgroundColor: "#3182ce",
+                                    backgroundColor: "#3b6ef8",
                                     color: "white",
                                     borderRadius: "0.5rem",
                                     cursor: "pointer",
@@ -936,12 +977,12 @@ const Profile = () => {
             </div>
 
             {/* Grade Card Upload */}
-            <div style={{ backgroundColor: "#f7fafc", padding: "1.5rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>Grade Card / Marksheet</h3>
-                <div style={{ border: "2px dashed #cbd5e0", borderRadius: "0.75rem", padding: "2rem", textAlign: "center" }}>
+            <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
+                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>Grade Card / Marksheet</h3>
+                <div style={{ border: "2px dashed #2d3448", borderRadius: "0.75rem", padding: "2rem", textAlign: "center" }}>
                     {gradeCard ? (
                         <div>
-                            <p style={{ color: "#2d3748", marginBottom: "0.5rem" }}>📄 {gradeCard.name}</p>
+                            <p style={{ color: "#e2e8f0", marginBottom: "0.5rem" }}>{gradeCard.name}</p>
                             <p style={{ fontSize: "0.875rem", color: "#718096" }}>
                                 Size: {(gradeCard.size / 1024).toFixed(2)} KB
                             </p>
@@ -969,7 +1010,7 @@ const Profile = () => {
                                 style={{
                                     display: "inline-block",
                                     padding: "0.625rem 1.25rem",
-                                    backgroundColor: "#3182ce",
+                                    backgroundColor: "#3b6ef8",
                                     color: "white",
                                     borderRadius: "0.5rem",
                                     cursor: "pointer",
@@ -990,9 +1031,9 @@ const Profile = () => {
             </div>
 
             {/* Document Guidelines */}
-            <div style={{ backgroundColor: "#fffaf0", padding: "1rem", borderRadius: "0.5rem", border: "1px solid #fbd38d" }}>
-                <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#c05621", marginBottom: "0.5rem" }}>📋 Document Guidelines</h4>
-                <ul style={{ fontSize: "0.875rem", color: "#744210", paddingLeft: "1.25rem", margin: 0 }}>
+            <div style={{ backgroundColor: "#1a1f2e", padding: "1rem", borderRadius: "0.5rem", border: "1px solid #2d3448" }}>
+                <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#a0aec0", marginBottom: "0.5rem" }}>Document Guidelines</h4>
+                <ul style={{ fontSize: "0.875rem", color: "#718096", paddingLeft: "1.25rem", margin: 0 }}>
                     <li>Resume should be in PDF format and not exceed 2MB</li>
                     <li>Grade card should clearly show all semesters and CGPA</li>
                     <li>Ensure all documents are clear and readable</li>

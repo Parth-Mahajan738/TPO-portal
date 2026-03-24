@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+/* Dark theme placeholder styling */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+    color: #718096;
+    opacity: 1;
+}
+
+/* Style for select options in dark theme */
+select option {
+    background-color: #1a1f2e;
+    color: #e2e8f0;
+}
+
+/* Input focus styles for dark theme */
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #3b6ef8;
+    outline: none;
+}
