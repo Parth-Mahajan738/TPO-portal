@@ -259,7 +259,7 @@ const StudentSidebar = () => {
                                 fontSize: "0.9rem",
                                 fontWeight: isActive(item.path) ? 600 : 500,
                                 transition: "all 0.2s ease",
-                                justifyContent: isCollapsed ? "center" : "flex-start",
+                                justifyContent: isCollapsed ? "center" : "center",
                                 whiteSpace: "nowrap"
                             }}
                             onMouseEnter={(e) => {

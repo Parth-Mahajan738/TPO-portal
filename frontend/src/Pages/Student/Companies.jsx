@@ -23,137 +23,64 @@ const Companies = () => {
         loadCompanies();
     }, []);
 
-    const loadCompanies = () => {
-        // Sample data - in real app, fetch from backend
-        const sampleCompanies = [
-            {
-                id: 1,
-                name: "Tech Solutions Inc.",
-                logo: "TS",
-                industry: "Information Technology",
-                description: "Leading software development company specializing in enterprise solutions and cloud services.",
-                website: "https://techsolutions.com",
-                location: "Bangalore, Hyderabad, Pune",
-                jobRole: "Software Development Engineer",
-                jobType: "Full-time",
-                ctc: "12-15 LPA",
-                baseSalary: "10 LPA",
-                bond: "1 year",
-                eligibility: {
-                    cgpa: 7.5,
-                    tenth: 75,
-                    twelfth: 75,
-                    backlog: 0
-                },
-                skills: ["Java", "Python", "React", "Node.js", "SQL"],
-                deadline: "2026-04-15",
-                driveDate: "2026-04-25",
-                rounds: ["Online Assessment", "Technical Interview", "HR Interview"],
-                applied: false
-            },
-            {
-                id: 2,
-                name: "DataFlow Analytics",
-                logo: "DF",
-                industry: "Data Science & Analytics",
-                description: "Data-driven company providing AI and machine learning solutions to global clients.",
-                website: "https://dataflow.io",
-                location: "Bangalore, Mumbai",
-                jobRole: "Data Analyst",
-                jobType: "Full-time",
-                ctc: "8-10 LPA",
-                baseSalary: "7 LPA",
-                bond: "None",
-                eligibility: {
-                    cgpa: 7.0,
-                    tenth: 70,
-                    twelfth: 70,
-                    backlog: 0
-                },
-                skills: ["Python", "R", "SQL", "Tableau", "Machine Learning"],
-                deadline: "2026-04-10",
-                driveDate: "2026-04-20",
-                rounds: ["Aptitude Test", "Coding Round", "Technical Interview", "HR Round"],
-                applied: false
-            },
-            {
-                id: 3,
-                name: "CloudNine Systems",
-                logo: "CN",
-                industry: "Cloud Computing",
-                description: "Cloud infrastructure and DevOps solutions provider for startups and enterprises.",
-                website: "https://cloudnine.tech",
-                location: "Hyderabad, Chennai",
-                jobRole: "DevOps Engineer",
-                jobType: "Full-time",
-                ctc: "10-14 LPA",
-                baseSalary: "9 LPA",
-                bond: "6 months",
-                eligibility: {
-                    cgpa: 7.0,
-                    tenth: 70,
-                    twelfth: 70,
-                    backlog: 0
-                },
-                skills: ["AWS", "Docker", "Kubernetes", "Jenkins", "Terraform"],
-                deadline: "2026-04-20",
-                driveDate: "2026-04-30",
-                rounds: ["Technical Assessment", "System Design", "Technical Interview", "HR Interview"],
-                applied: false
-            },
-            {
-                id: 4,
-                name: "FinTech Innovations",
-                logo: "FT",
-                industry: "Financial Technology",
-                description: "Revolutionizing banking and financial services through cutting-edge technology.",
-                website: "https://fintechinnovations.com",
-                location: "Mumbai, Pune",
-                jobRole: "Software Engineer",
-                jobType: "Full-time",
-                ctc: "15-18 LPA",
-                baseSalary: "12 LPA",
-                bond: "2 years",
-                eligibility: {
-                    cgpa: 8.0,
-                    tenth: 80,
-                    twelfth: 80,
-                    backlog: 0
-                },
-                skills: ["Java", "Spring Boot", "Microservices", "Kafka", "PostgreSQL"],
-                deadline: "2026-04-05",
-                driveDate: "2026-04-18",
-                rounds: ["Online Test", "Technical Interview 1", "Technical Interview 2", "HR Interview"],
-                applied: false
-            },
-            {
-                id: 5,
-                name: "MobileFirst Apps",
-                logo: "MF",
-                industry: "Mobile Development",
-                description: "Award-winning mobile app development company creating innovative iOS and Android applications.",
-                website: "https://mobilefirst.io",
-                location: "Bangalore",
-                jobRole: "Mobile Developer",
-                jobType: "Full-time",
-                ctc: "9-12 LPA",
-                baseSalary: "8 LPA",
-                bond: "1 year",
-                eligibility: {
-                    cgpa: 7.0,
-                    tenth: 70,
-                    twelfth: 70,
-                    backlog: 0
-                },
-                skills: ["React Native", "Flutter", "Swift", "Kotlin", "Firebase"],
-                deadline: "2026-04-12",
-                driveDate: "2026-04-22",
-                rounds: ["Coding Test", "App Development Task", "Technical Interview", "HR Interview"],
-                applied: false
+    const loadCompanies = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+
+            const res = await fetch("http://localhost:8000/api/recruiter/jobs/", {
+                headers: { "Authorization": `Token ${token}` }
+            });
+
+            if (res.ok) {
+                const jobs = await res.json();
+                
+                // Track applied jobs to filter them out
+                let appliedIds = [];
+                const storedUser = localStorage.getItem("user");
+                if (storedUser) {
+                    const u = JSON.parse(storedUser);
+                    // Same logic as getStudentStorageKey
+                    const studentKey = u.prn || u.urn || u.email;
+                    if (studentKey) {
+                        const apps = JSON.parse(localStorage.getItem(`applications_${studentKey}`) || "[]");
+                        appliedIds = apps.map(app => app.companyId);
+                    }
+                }
+
+                const companyList = jobs
+                    .filter(job => !appliedIds.includes(job.id))
+                    .map(job => ({
+                    id: job.id,
+                    name: job.company_name,
+                    logo: job.company_name ? job.company_name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase() : "??",
+                    industry: job.job_type || "General",
+                    description: job.job_description || "No description provided.",
+                    website: "#",
+                    location: job.location || "Not specified",
+                    jobRole: job.job_title || "Not specified",
+                    jobType: job.job_type || "Full-time",
+                    ctc: job.salary ? `${job.salary} LPA` : "Not disclosed",
+                    baseSalary: job.salary ? `${job.salary} LPA` : "Not disclosed",
+                    bond: "N/A",
+                    eligibility: {
+                        cgpa: 0,
+                        tenth: 0,
+                        twelfth: 0,
+                        backlog: 0
+                    },
+                    skills: job.qualifications ? job.qualifications.split(",").map(s => s.trim()).filter(Boolean) : [],
+                    deadline: job.application_deadline || "",
+                    driveDate: job.application_deadline || "",
+                    rounds: [],
+                    applied: false
+                }));
+                setCompanies(companyList);
+                setFilteredCompanies(companyList);
             }
-        ];
-        setCompanies(sampleCompanies);
-        setFilteredCompanies(sampleCompanies);
+        } catch (err) {
+            console.error("Failed to load companies/jobs", err);
+        }
     };
 
     useEffect(() => {

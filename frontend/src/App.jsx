@@ -23,37 +23,42 @@ import ManageCompanies from "./Pages/TPOAdmin/Manage";
 import ApproveDrives from "./Pages/TPOAdmin/Approve";
 import Analytics from "./Pages/TPOAdmin/Analytics";
 
+import { WebSocketProvider } from "./Context/WebSocketContext";
+import ProtectedRoute from "./Components/ProtectedRoute";
+
 // BrowserRouter: Wraps the app to enable client-side routing.
 // Routes: Container for all possible route definitions.
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Login />} /> {/* Default to login */}
+    <WebSocketProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Login />} /> {/* Default to login */}
 
-        {/* Student Routes */}
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
-        <Route path="/student/profile" element={<StudentProfile />} />
-        <Route path="/student/companies" element={<Companies />} />
-        <Route path="/student/apply/:companyId" element={<Apply />} />
-        <Route path="/student/applications" element={<ApplicationTracker />} />
+          {/* Student Routes */}
+          <Route path="/student/dashboard" element={<ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>} />
+          <Route path="/student/profile" element={<ProtectedRoute allowedRoles={['student']}><StudentProfile /></ProtectedRoute>} />
+          <Route path="/student/companies" element={<ProtectedRoute allowedRoles={['student']}><Companies /></ProtectedRoute>} />
+          <Route path="/student/apply/:companyId" element={<ProtectedRoute allowedRoles={['student']}><Apply /></ProtectedRoute>} />
+          <Route path="/student/applications" element={<ProtectedRoute allowedRoles={['student']}><ApplicationTracker /></ProtectedRoute>} />
 
-        {/* Recruiter Routes */}
-        <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
-        <Route path="/recruiter/post-job" element={<JobPost />} />
-        <Route path="/recruiter/applicants" element={<Applicants />} />
-        <Route path="/recruiter/rounds" element={<PlacementRounds />} />
-        <Route path="/recruiter/events" element={<EventScheduling />} />
+          {/* Recruiter Routes */}
+          <Route path="/recruiter/dashboard" element={<ProtectedRoute allowedRoles={['recruiter']}><RecruiterDashboard /></ProtectedRoute>} />
+          <Route path="/recruiter/post-job" element={<ProtectedRoute allowedRoles={['recruiter']}><JobPost /></ProtectedRoute>} />
+          <Route path="/recruiter/applicants" element={<ProtectedRoute allowedRoles={['recruiter']}><Applicants /></ProtectedRoute>} />
+          <Route path="/recruiter/rounds" element={<ProtectedRoute allowedRoles={['recruiter']}><PlacementRounds /></ProtectedRoute>} />
+          <Route path="/recruiter/events" element={<ProtectedRoute allowedRoles={['recruiter']}><EventScheduling /></ProtectedRoute>} />
 
-        {/* Admin Routes */}
-        <Route path="/admin/companies" element={<ManageCompanies />} />
-        <Route path="/admin/drives" element={<ApproveDrives />} />
-        <Route path="/admin/results" element={<Analytics />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Admin Routes */}
+          <Route path="/admin/companies" element={<ProtectedRoute allowedRoles={['tpo', 'admin']}><ManageCompanies /></ProtectedRoute>} />
+          <Route path="/admin/drives" element={<ProtectedRoute allowedRoles={['tpo', 'admin']}><ApproveDrives /></ProtectedRoute>} />
+          <Route path="/admin/results" element={<ProtectedRoute allowedRoles={['tpo', 'admin']}><Analytics /></ProtectedRoute>} />
+        </Routes>
+      </BrowserRouter>
+    </WebSocketProvider>
   );
 }
 

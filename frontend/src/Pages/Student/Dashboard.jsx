@@ -34,18 +34,10 @@ const StudentDashboard = () => {
         }
     }, []); // Empty array [] means: run this only once, on first render
 
-    const loadDashboardData = (studentKey) => {
-        // Load applications
+    const loadDashboardData = async (studentKey) => {
+        // Load applications from localStorage
         const savedApplications = localStorage.getItem(`applications_${studentKey}`);
-        const applications = savedApplications ? JSON.parse(savedApplications) : [];
-
-        // Sample data for demonstration
-        const sampleApps = [
-            { id: 1001, companyName: "DataFlow Analytics", jobRole: "Data Analyst", status: "Shortlisted", appliedDate: "2026-03-15" },
-            { id: 1002, companyName: "Tech Solutions Inc.", jobRole: "Software Development Engineer", status: "Rejected", appliedDate: "2026-03-10" },
-            { id: 1003, companyName: "MobileFirst Apps", jobRole: "Mobile Developer", status: "Applied", appliedDate: "2026-03-18" }
-        ];
-        const allApps = [...sampleApps, ...applications];
+        const allApps = savedApplications ? JSON.parse(savedApplications) : [];
 
         setStats({
             totalApplications: allApps.length,
@@ -56,12 +48,31 @@ const StudentDashboard = () => {
 
         setRecentApplications(allApps.slice(0, 5));
 
-        // Sample upcoming drives
-        setUpcomingDrives([
-            { id: 1, companyName: "CloudNine Systems", driveDate: "2026-03-25", jobRole: "DevOps Engineer", location: "Hyderabad" },
-            { id: 2, companyName: "FinTech Innovations", driveDate: "2026-03-28", jobRole: "Software Engineer", location: "Mumbai" },
-            { id: 3, companyName: "Tech Solutions Inc.", driveDate: "2026-04-02", jobRole: "SDE Intern", location: "Bangalore" }
-        ]);
+        // Load upcoming drives from recruiter jobs in Backend
+        try {
+            const token = localStorage.getItem("token");
+            if (token) {
+                const res = await fetch("http://localhost:8000/api/recruiter/jobs/", {
+                    headers: { "Authorization": `Token ${token}` }
+                });
+                if (res.ok) {
+                    const jobs = await res.json();
+                    const drives = jobs
+                        .filter(job => job.application_deadline && new Date(job.application_deadline) >= new Date())
+                        .map(job => ({
+                            id: job.id,
+                            companyName: job.company_name,
+                            driveDate: job.application_deadline,
+                            jobRole: job.job_title,
+                            location: job.location
+                        }))
+                        .slice(0, 5);
+                    setUpcomingDrives(drives);
+                }
+            }
+        } catch (e) {
+            console.error("Failed to load upcoming drives", e);
+        }
 
         // Calculate profile completion
         const savedProfile = localStorage.getItem(`profile_${studentKey}`);

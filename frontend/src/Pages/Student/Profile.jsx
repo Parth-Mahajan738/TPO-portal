@@ -17,25 +17,16 @@ const Profile = () => {
         phone: "",
         dateOfBirth: "",
         gender: "",
-        address: "",
-        city: "",
-        state: "",
-        pincode: "",
         linkedin: "",
         github: "",
         portfolio: ""
     });
 
     const [education, setEducation] = useState({
-        tenth: { board: "", school: "", percentage: "", yearOfPassing: "" },
-        twelfth: { board: "", school: "", percentage: "", yearOfPassing: "" },
         graduation: {
             degree: "",
             branch: "",
-            college: "",
-            university: "",
             cgpa: "",
-            currentYear: "",
             expectedGraduation: "",
             backlogCount: "0"
         }
@@ -45,8 +36,6 @@ const Profile = () => {
     const [newSkill, setNewSkill] = useState("");
     const [certifications, setCertifications] = useState([]);
     const [newCertification, setNewCertification] = useState({ name: "", issuer: "", year: "" });
-    const [projects, setProjects] = useState([]);
-    const [newProject, setNewProject] = useState({ title: "", description: "", technologies: "", link: "" });
     const [workExperience, setWorkExperience] = useState([]);
     const [newExperience, setNewExperience] = useState({ company: "", role: "", duration: "", description: "" });
 
@@ -69,8 +58,6 @@ const Profile = () => {
     }, []);
 
     const loadProfileData = (studentKey) => {
-        // In a real app, this would fetch from backend
-        // For now, we'll use sample data or localStorage
         const savedProfile = localStorage.getItem(`profile_${studentKey}`);
         if (savedProfile) {
             const data = JSON.parse(savedProfile);
@@ -78,8 +65,9 @@ const Profile = () => {
             setEducation(data.education || education);
             setSkills(data.skills || []);
             setCertifications(data.certifications || []);
-            setProjects(data.projects || []);
             setWorkExperience(data.workExperience || []);
+            setResume(data.resume || null);
+            setGradeCard(data.gradeCard || null);
         }
     };
 
@@ -97,8 +85,9 @@ const Profile = () => {
                 education,
                 skills,
                 certifications,
-                projects,
-                workExperience
+                workExperience,
+                resume,
+                gradeCard
             };
             localStorage.setItem(`profile_${key}`, JSON.stringify(profileData));
             setIsEditing(false);
@@ -111,11 +100,21 @@ const Profile = () => {
     const handleFileUpload = (e, type) => {
         const file = e.target.files[0];
         if (file) {
-            if (type === "resume") {
-                setResume(file);
-            } else if (type === "gradeCard") {
-                setGradeCard(file);
-            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const fileData = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    content: reader.result
+                };
+                if (type === "resume") {
+                    setResume(fileData);
+                } else if (type === "gradeCard") {
+                    setGradeCard(fileData);
+                }
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -139,17 +138,6 @@ const Profile = () => {
 
     const removeCertification = (id) => {
         setCertifications(certifications.filter(cert => cert.id !== id));
-    };
-
-    const addProject = () => {
-        if (newProject.title.trim()) {
-            setProjects([...projects, { ...newProject, id: Date.now() }]);
-            setNewProject({ title: "", description: "", technologies: "", link: "" });
-        }
-    };
-
-    const removeProject = (id) => {
-        setProjects(projects.filter(proj => proj.id !== id));
     };
 
     const addExperience = () => {
@@ -233,66 +221,7 @@ const Profile = () => {
                 )}
             </div>
 
-            <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.5rem" }}>
-                    Address
-                </label>
-                {isEditing ? (
-                    <textarea
-                        value={personalInfo.address}
-                        onChange={(e) => setPersonalInfo({ ...personalInfo, address: e.target.value })}
-                        rows="3"
-                        style={{
-                            width: "100%",
-                            padding: "0.625rem",
-                            border: "1px solid #2d3448",
-                            borderRadius: "0.5rem",
-                            fontSize: "0.875rem",
-                            resize: "vertical",
-                            backgroundColor: "#242938",
-                            color: "#e2e8f0"
-                        }}
-                    />
-                ) : (
-                    <p style={{ padding: "0.625rem", backgroundColor: "#242938", borderRadius: "0.5rem", fontSize: "0.875rem", color: "#e2e8f0" }}>
-                        {personalInfo.address || <span style={{ color: "#718096" }}>Not provided</span>}
-                    </p>
-                )}
-            </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                {[
-                    { label: "City", key: "city" },
-                    { label: "State", key: "state" },
-                    { label: "Pincode", key: "pincode" }
-                ].map(field => (
-                    <div key={field.key}>
-                        <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.5rem" }}>
-                            {field.label}
-                        </label>
-                        {isEditing ? (
-                            <input
-                                type="text"
-                                value={personalInfo[field.key]}
-                                onChange={(e) => setPersonalInfo({ ...personalInfo, [field.key]: e.target.value })}
-                                style={{
-                                    width: "100%",
-                                    padding: "0.625rem",
-                                    border: "1px solid #2d3448",
-                                    borderRadius: "0.5rem",
-                                    fontSize: "0.875rem",
-                                    backgroundColor: "#242938",
-                                    color: "#e2e8f0"
-                                }}
-                            />
-                        ) : (
-                            <p style={{ padding: "0.625rem", backgroundColor: "#242938", borderRadius: "0.5rem", fontSize: "0.875rem", color: "#e2e8f0" }}>
-                                {personalInfo[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
-                            </p>
-                        )}
-                    </div>
-                ))}
-            </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
                 {[
@@ -337,89 +266,7 @@ const Profile = () => {
 
     const renderEducation = () => (
         <div style={{ display: "grid", gap: "2rem" }}>
-            {/* 10th Standard */}
-            <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>10th Standard</h3>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                    {[
-                        { label: "Board", key: "board" },
-                        { label: "School Name", key: "school" },
-                        { label: "Percentage/CGPA", key: "percentage" },
-                        { label: "Year of Passing", key: "yearOfPassing" }
-                    ].map(field => (
-                        <div key={field.key}>
-                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.25rem" }}>
-                                {field.label}
-                            </label>
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    value={education.tenth[field.key]}
-                                    onChange={(e) => setEducation({
-                                        ...education,
-                                        tenth: { ...education.tenth, [field.key]: e.target.value }
-                                    })}
-                                    style={{
-                                        width: "100%",
-                                        padding: "0.5rem",
-                                        border: "1px solid #2d3448",
-                                        borderRadius: "0.375rem",
-                                        fontSize: "0.875rem",
-                                        backgroundColor: "#1a1f2e",
-                                        color: "#e2e8f0"
-                                    }}
-                                />
-                            ) : (
-                                <p style={{ fontSize: "0.875rem", color: "#e2e8f0" }}>
-                                    {education.tenth[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
-                                </p>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </div>
 
-            {/* 12th Standard */}
-            <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "1rem" }}>12th Standard / Diploma</h3>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-                    {[
-                        { label: "Board", key: "board" },
-                        { label: "School/College Name", key: "school" },
-                        { label: "Percentage/CGPA", key: "percentage" },
-                        { label: "Year of Passing", key: "yearOfPassing" }
-                    ].map(field => (
-                        <div key={field.key}>
-                            <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 500, color: "#a0aec0", marginBottom: "0.25rem" }}>
-                                {field.label}
-                            </label>
-                            {isEditing ? (
-                                <input
-                                    type="text"
-                                    value={education.twelfth[field.key]}
-                                    onChange={(e) => setEducation({
-                                        ...education,
-                                        twelfth: { ...education.twelfth, [field.key]: e.target.value }
-                                    })}
-                                    style={{
-                                        width: "100%",
-                                        padding: "0.5rem",
-                                        border: "1px solid #2d3448",
-                                        borderRadius: "0.375rem",
-                                        fontSize: "0.875rem",
-                                        backgroundColor: "#1a1f2e",
-                                        color: "#e2e8f0"
-                                    }}
-                                />
-                            ) : (
-                                <p style={{ fontSize: "0.875rem", color: "#e2e8f0" }}>
-                                    {education.twelfth[field.key] || <span style={{ color: "#718096" }}>Not provided</span>}
-                                </p>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </div>
 
             {/* Graduation */}
             <div style={{ backgroundColor: "#242938", padding: "1.5rem", borderRadius: "0.75rem" }}>
@@ -428,10 +275,7 @@ const Profile = () => {
                     {[
                         { label: "Degree", key: "degree" },
                         { label: "Branch/Specialization", key: "branch" },
-                        { label: "College Name", key: "college" },
-                        { label: "University", key: "university" },
                         { label: "Current CGPA/Percentage", key: "cgpa" },
-                        { label: "Current Year", key: "currentYear" },
                         { label: "Expected Graduation", key: "expectedGraduation" },
                         { label: "Active Backlogs", key: "backlogCount" }
                     ].map(field => (
@@ -648,152 +492,7 @@ const Profile = () => {
         </div>
     );
 
-    const renderProjects = () => (
-        <div style={{ display: "grid", gap: "1.5rem" }}>
-            {isEditing && (
-                <div style={{ backgroundColor: "#242938", padding: "1rem", borderRadius: "0.75rem" }}>
-                    <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.75rem" }}>Add New Project</h4>
-                    <div style={{ display: "grid", gap: "0.5rem" }}>
-                        <input
-                            type="text"
-                            value={newProject.title}
-                            onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                            placeholder="Project Title"
-                            style={{
-                                padding: "0.5rem",
-                                border: "1px solid #2d3448",
-                                borderRadius: "0.375rem",
-                                fontSize: "0.875rem",
-                                backgroundColor: "#1a1f2e",
-                                color: "#e2e8f0"
-                            }}
-                        />
-                        <textarea
-                            value={newProject.description}
-                            onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                            placeholder="Project Description"
-                            rows="2"
-                            style={{
-                                padding: "0.5rem",
-                                border: "1px solid #2d3448",
-                                borderRadius: "0.375rem",
-                                fontSize: "0.875rem",
-                                resize: "vertical",
-                                backgroundColor: "#1a1f2e",
-                                color: "#e2e8f0"
-                            }}
-                        />
-                        <input
-                            type="text"
-                            value={newProject.technologies}
-                            onChange={(e) => setNewProject({ ...newProject, technologies: e.target.value })}
-                            placeholder="Technologies Used (comma separated)"
-                            style={{
-                                padding: "0.5rem",
-                                border: "1px solid #2d3448",
-                                borderRadius: "0.375rem",
-                                fontSize: "0.875rem",
-                                backgroundColor: "#1a1f2e",
-                                color: "#e2e8f0"
-                            }}
-                        />
-                        <input
-                            type="url"
-                            value={newProject.link}
-                            onChange={(e) => setNewProject({ ...newProject, link: e.target.value })}
-                            placeholder="Project Link (GitHub/Live Demo)"
-                            style={{
-                                padding: "0.5rem",
-                                border: "1px solid #2d3448",
-                                borderRadius: "0.375rem",
-                                fontSize: "0.875rem",
-                                backgroundColor: "#1a1f2e",
-                                color: "#e2e8f0"
-                            }}
-                        />
-                        <button
-                            onClick={addProject}
-                            style={{
-                                padding: "0.5rem 1rem",
-                                backgroundColor: "#3b6ef8",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "0.375rem",
-                                cursor: "pointer",
-                                fontSize: "0.875rem",
-                                marginTop: "0.5rem"
-                            }}
-                        >
-                            Add Project
-                        </button>
-                    </div>
-                </div>
-            )}
 
-            <div style={{ display: "grid", gap: "1rem" }}>
-                {projects.length > 0 ? projects.map((project) => (
-                    <div
-                        key={project.id}
-                        style={{
-                            padding: "1.25rem",
-                            backgroundColor: "#242938",
-                            borderRadius: "0.75rem",
-                            border: "1px solid #2d3448"
-                        }}
-                    >
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                            <h4 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0" }}>{project.title}</h4>
-                            {isEditing && (
-                                <button
-                                    onClick={() => removeProject(project.id)}
-                                    style={{
-                                        background: "none",
-                                        border: "none",
-                                        color: "#e53e3e",
-                                        cursor: "pointer",
-                                        fontSize: "1.25rem"
-                                    }}
-                                >
-                                    ×
-                                </button>
-                            )}
-                        </div>
-                        <p style={{ fontSize: "0.875rem", color: "#a0aec0", marginBottom: "0.75rem" }}>{project.description}</p>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                            {project.technologies.split(",").map((tech, idx) => (
-                                <span
-                                    key={idx}
-                                    style={{
-                                        padding: "0.25rem 0.5rem",
-                                        backgroundColor: "#1a1f2e",
-                                        borderRadius: "0.25rem",
-                                        fontSize: "0.75rem",
-                                        color: "#a0aec0"
-                                    }}
-                                >
-                                    {tech.trim()}
-                                </span>
-                            ))}
-                        </div>
-                        {project.link && (
-                            <a
-                                href={project.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ fontSize: "0.875rem", color: "#3b6ef8" }}
-                            >
-                                View Project →
-                            </a>
-                        )}
-                    </div>
-                )) : (
-                    <p style={{ color: "#718096", fontSize: "0.875rem", textAlign: "center", padding: "2rem" }}>
-                        No projects added yet
-                    </p>
-                )}
-            </div>
-        </div>
-    );
 
     const renderExperience = () => (
         <div style={{ display: "grid", gap: "1.5rem" }}>
@@ -1047,7 +746,6 @@ const Profile = () => {
         { id: "personal", label: "Personal Info" },
         { id: "education", label: "Education" },
         { id: "skills", label: "Skills & Certifications" },
-        { id: "projects", label: "Projects" },
         { id: "experience", label: "Experience" },
         { id: "documents", label: "Documents" }
     ];
@@ -1147,7 +845,6 @@ const Profile = () => {
                     {activeTab === "personal" && renderPersonalInfo()}
                     {activeTab === "education" && renderEducation()}
                     {activeTab === "skills" && renderSkills()}
-                    {activeTab === "projects" && renderProjects()}
                     {activeTab === "experience" && renderExperience()}
                     {activeTab === "documents" && renderDocuments()}
                 </div>

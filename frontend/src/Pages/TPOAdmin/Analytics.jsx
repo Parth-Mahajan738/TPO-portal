@@ -10,18 +10,29 @@ const Analytics = () => {
     });
 
     useEffect(() => {
-        // Load stats from localStorage
+        // Load real stats from localStorage
         const savedJobs = localStorage.getItem("recruiter_jobs");
         const savedRounds = localStorage.getItem("recruiter_rounds");
 
-        const companies = savedJobs ? [...new Set(JSON.parse(savedJobs).map(j => j.companyName))].length : 0;
+        const jobsList = savedJobs ? JSON.parse(savedJobs) : [];
+        const companies = [...new Set(jobsList.map(j => j.companyName))].length;
         const rounds = savedRounds ? JSON.parse(savedRounds).length : 0;
+
+        // Count actual applications across all students
+        let totalApps = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("applications_")) {
+                const apps = JSON.parse(localStorage.getItem(key));
+                totalApps += Array.isArray(apps) ? apps.length : 0;
+            }
+        }
 
         setStats({
             totalCompanies: companies,
             totalRounds: rounds,
-            totalApplications: companies * 3, // Sample calculation
-            placedStudents: Math.floor((companies * 3) * 0.3) // 30% placement rate
+            totalApplications: totalApps,
+            placedStudents: 0
         });
     }, []);
 

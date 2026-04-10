@@ -17,6 +17,7 @@ def login_view(request):
             data = json.loads(request.body)
             username_or_email = data.get('username') or data.get('email')
             password = data.get('password')
+            requested_role = data.get('role')
 
             # Dual Login: support both username and email
             if '@' in username_or_email:
@@ -29,6 +30,10 @@ def login_view(request):
             user = authenticate(request, username=username_or_email, password=password)
 
             if user is not None:
+                # Ensure they are logging in from the correct portal for their role
+                if requested_role and user.role != requested_role:
+                    return JsonResponse({"message": "Invalid credentials for the selected portal type."}, status=403)
+
                 login(request, user)
                 token, created = Token.objects.get_or_create(user=user)
                 return JsonResponse({
@@ -81,6 +86,7 @@ def register_view(request):
 @permission_classes([IsAuthenticated])
 def profile_view(request):
     return Response({
+        "id": request.user.id,
         "first_name": request.user.first_name,
         "last_name": request.user.last_name,
         "username": request.user.username,

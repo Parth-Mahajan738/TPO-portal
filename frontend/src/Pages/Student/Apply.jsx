@@ -73,63 +73,36 @@ const Apply = () => {
         }
     };
 
-    const loadCompanyData = () => {
-        // In a real app, fetch from backend using companyId
-        const sampleCompanies = [
-            {
-                id: 1,
-                name: "Tech Solutions Inc.",
-                logo: "TS",
-                jobRole: "Software Development Engineer",
-                ctc: "12-15 LPA",
-                location: "Bangalore, Hyderabad, Pune",
-                deadline: "2026-04-15",
-                eligibility: { cgpa: 7.5, tenth: 75, twelfth: 75, backlog: 0 }
-            },
-            {
-                id: 2,
-                name: "DataFlow Analytics",
-                logo: "DF",
-                jobRole: "Data Analyst",
-                ctc: "8-10 LPA",
-                location: "Bangalore, Mumbai",
-                deadline: "2026-04-10",
-                eligibility: { cgpa: 7.0, tenth: 70, twelfth: 70, backlog: 0 }
-            },
-            {
-                id: 3,
-                name: "CloudNine Systems",
-                logo: "CN",
-                jobRole: "DevOps Engineer",
-                ctc: "10-14 LPA",
-                location: "Hyderabad, Chennai",
-                deadline: "2026-04-20",
-                eligibility: { cgpa: 7.0, tenth: 70, twelfth: 70, backlog: 0 }
-            },
-            {
-                id: 4,
-                name: "FinTech Innovations",
-                logo: "FT",
-                jobRole: "Software Engineer",
-                ctc: "15-18 LPA",
-                location: "Mumbai, Pune",
-                deadline: "2026-04-05",
-                eligibility: { cgpa: 8.0, tenth: 80, twelfth: 80, backlog: 0 }
-            },
-            {
-                id: 5,
-                name: "MobileFirst Apps",
-                logo: "MF",
-                jobRole: "Mobile Developer",
-                ctc: "9-12 LPA",
-                location: "Bangalore",
-                deadline: "2026-04-12",
-                eligibility: { cgpa: 7.0, tenth: 70, twelfth: 70, backlog: 0 }
-            }
-        ];
+    const loadCompanyData = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
 
-        const found = sampleCompanies.find(c => c.id === parseInt(companyId)) || sampleCompanies[0];
-        setCompany(found);
+            const res = await fetch(`http://localhost:8000/api/recruiter/jobs/${companyId}/`, {
+                headers: { "Authorization": `Token ${token}` }
+            });
+
+            if (res.ok) {
+                const job = await res.json();
+                setCompany({
+                    id: job.id,
+                    name: job.company_name,
+                    logo: job.company_name ? job.company_name.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase() : "??",
+                    jobRole: job.job_title || "Not specified",
+                    ctc: job.salary ? `${job.salary} LPA` : "Not disclosed",
+                    location: job.location || "Not specified",
+                    deadline: job.application_deadline || "",
+                    eligibility: {
+                        cgpa: job.qualifications ? parseFloat(job.qualifications) : 0,
+                        tenth: 0,
+                        twelfth: 0,
+                        backlog: 0
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("Failed to load company/job", err);
+        }
     };
 
 
@@ -339,228 +312,12 @@ const Apply = () => {
                     </div>
                 </div>
             </div>
-
-            <div style={{ backgroundColor: "#f7fafc", padding: "1.25rem", borderRadius: "0.75rem" }}>
-                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>
-                    📊 Eligibility Check
-                </h3>
-                {company && (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
-                        <div style={{ backgroundColor: "white", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                            <p style={{ fontSize: "0.75rem", color: "#718096" }}>Required CGPA</p>
-                            <p style={{ fontWeight: 600, color: "#2d3748" }}>{company.eligibility.cgpa}+</p>
-                        </div>
-                        <div style={{ backgroundColor: "white", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                            <p style={{ fontSize: "0.75rem", color: "#718096" }}>10th Percentage</p>
-                            <p style={{ fontWeight: 600, color: "#2d3748" }}>{company.eligibility.tenth}%+</p>
-                        </div>
-                        <div style={{ backgroundColor: "white", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                            <p style={{ fontSize: "0.75rem", color: "#718096" }}>12th Percentage</p>
-                            <p style={{ fontWeight: 600, color: "#2d3748" }}>{company.eligibility.twelfth}%+</p>
-                        </div>
-                        <div style={{ backgroundColor: "white", padding: "0.75rem", borderRadius: "0.5rem" }}>
-                            <p style={{ fontSize: "0.75rem", color: "#718096" }}>Active Backlogs</p>
-                            <p style={{ fontWeight: 600, color: "#2d3748" }}>{company.eligibility.backlog}</p>
-                        </div>
-                    </div>
-                )}
-            </div>
         </div>
     );
+
+
 
     const renderStep2 = () => (
-        <div style={{ display: "grid", gap: "1.5rem" }}>
-            <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
-                    Preferred Location
-                </label>
-                <select
-                    value={applicationData.preferredLocation}
-                    onChange={(e) => handleInputChange("preferredLocation", e.target.value)}
-                    style={{
-                        width: "100%",
-                        padding: "0.75rem",
-                        border: "1px solid #e2e8f0",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.875rem"
-                    }}
-                >
-                    <option value="">Select preferred location</option>
-                    {company && company.location.split(", ").map((loc, idx) => (
-                        <option key={idx} value={loc}>{loc}</option>
-                    ))}
-                    <option value="any">Any location</option>
-                </select>
-            </div>
-
-            <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
-                    Expected CTC (in LPA)
-                </label>
-                <input
-                    type="text"
-                    value={applicationData.expectedCTC}
-                    onChange={(e) => handleInputChange("expectedCTC", e.target.value)}
-                    placeholder="e.g., 12"
-                    style={{
-                        width: "100%",
-                        padding: "0.75rem",
-                        border: "1px solid #e2e8f0",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.875rem"
-                    }}
-                />
-            </div>
-
-            <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
-                    Earliest Joining Date
-                </label>
-                <input
-                    type="date"
-                    value={applicationData.joiningDate}
-                    onChange={(e) => handleInputChange("joiningDate", e.target.value)}
-                    style={{
-                        width: "100%",
-                        padding: "0.75rem",
-                        border: "1px solid #e2e8f0",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.875rem"
-                    }}
-                />
-            </div>
-
-            <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
-                    Cover Letter / Why should we hire you?
-                </label>
-                <textarea
-                    value={applicationData.coverLetter}
-                    onChange={(e) => handleInputChange("coverLetter", e.target.value)}
-                    rows="5"
-                    placeholder="Write a brief cover letter explaining why you're a good fit for this role..."
-                    style={{
-                        width: "100%",
-                        padding: "0.75rem",
-                        border: "1px solid #e2e8f0",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.875rem",
-                        resize: "vertical"
-                    }}
-                />
-            </div>
-
-            <div>
-                <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, color: "#4a5568", marginBottom: "0.5rem" }}>
-                    Additional Information (Optional)
-                </label>
-                <textarea
-                    value={applicationData.additionalInfo}
-                    onChange={(e) => handleInputChange("additionalInfo", e.target.value)}
-                    rows="3"
-                    placeholder="Any other information you'd like to share..."
-                    style={{
-                        width: "100%",
-                        padding: "0.75rem",
-                        border: "1px solid #e2e8f0",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.875rem",
-                        resize: "vertical"
-                    }}
-                />
-            </div>
-        </div>
-    );
-
-    const renderStep3 = () => (
-        <div style={{ display: "grid", gap: "1.5rem" }}>
-            <div>
-                <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>
-                    References (Optional)
-                </h3>
-                <p style={{ fontSize: "0.875rem", color: "#718096", marginBottom: "1rem" }}>
-                    Add professional references who can vouch for your skills and experience.
-                </p>
-
-                {applicationData.references.map((ref, index) => (
-                    <div key={index} style={{ backgroundColor: "#f7fafc", padding: "1rem", borderRadius: "0.5rem", marginBottom: "1rem" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                            <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#2d3748" }}>Reference {index + 1}</h4>
-                            {applicationData.references.length > 1 && (
-                                <button
-                                    onClick={() => removeReference(index)}
-                                    style={{
-                                        background: "none",
-                                        border: "none",
-                                        color: "#e53e3e",
-                                        cursor: "pointer",
-                                        fontSize: "0.875rem"
-                                    }}
-                                >
-                                    Remove
-                                </button>
-                            )}
-                        </div>
-                        <div style={{ display: "grid", gap: "0.75rem" }}>
-                            <input
-                                type="text"
-                                value={ref.name}
-                                onChange={(e) => handleReferenceChange(index, "name", e.target.value)}
-                                placeholder="Reference Name"
-                                style={{
-                                    padding: "0.625rem",
-                                    border: "1px solid #e2e8f0",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem"
-                                }}
-                            />
-                            <input
-                                type="text"
-                                value={ref.relation}
-                                onChange={(e) => handleReferenceChange(index, "relation", e.target.value)}
-                                placeholder="Relationship (e.g., Professor, Manager)"
-                                style={{
-                                    padding: "0.625rem",
-                                    border: "1px solid #e2e8f0",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem"
-                                }}
-                            />
-                            <input
-                                type="text"
-                                value={ref.contact}
-                                onChange={(e) => handleReferenceChange(index, "contact", e.target.value)}
-                                placeholder="Contact Number / Email"
-                                style={{
-                                    padding: "0.625rem",
-                                    border: "1px solid #e2e8f0",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem"
-                                }}
-                            />
-                        </div>
-                    </div>
-                ))}
-
-                <button
-                    onClick={addReference}
-                    style={{
-                        padding: "0.625rem 1rem",
-                        backgroundColor: "#e2e8f0",
-                        color: "#4a5568",
-                        border: "none",
-                        borderRadius: "0.375rem",
-                        cursor: "pointer",
-                        fontSize: "0.875rem"
-                    }}
-                >
-                    + Add Another Reference
-                </button>
-            </div>
-        </div>
-    );
-
-    const renderStep4 = () => (
         <div style={{ display: "grid", gap: "1.5rem" }}>
             <div style={{ backgroundColor: "#f7fafc", padding: "1.25rem", borderRadius: "0.75rem" }}>
                 <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "#2d3748", marginBottom: "1rem" }}>
@@ -580,28 +337,6 @@ const Apply = () => {
                             </div>
                         )}
                     </div>
-
-                    <div style={{ backgroundColor: "white", padding: "1rem", borderRadius: "0.5rem" }}>
-                        <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.5rem" }}>
-                            Your Preferences
-                        </h4>
-                        <div style={{ fontSize: "0.875rem", color: "#4a5568" }}>
-                            <p><strong>Preferred Location:</strong> {applicationData.preferredLocation || "Not specified"}</p>
-                            <p><strong>Expected CTC:</strong> {applicationData.expectedCTC || "Not specified"} LPA</p>
-                            <p><strong>Joining Date:</strong> {applicationData.joiningDate || "Not specified"}</p>
-                        </div>
-                    </div>
-
-                    {applicationData.coverLetter && (
-                        <div style={{ backgroundColor: "white", padding: "1rem", borderRadius: "0.5rem" }}>
-                            <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "#2d3748", marginBottom: "0.5rem" }}>
-                                Cover Letter
-                            </h4>
-                            <p style={{ fontSize: "0.875rem", color: "#4a5568", whiteSpace: "pre-wrap" }}>
-                                {applicationData.coverLetter}
-                            </p>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -635,9 +370,7 @@ const Apply = () => {
 
     const steps = [
         { number: 1, label: "Verify Profile" },
-        { number: 2, label: "Application Details" },
-        { number: 3, label: "References" },
-        { number: 4, label: "Review & Submit" }
+        { number: 2, label: "Review & Submit" }
     ];
 
     if (submitSuccess) {
@@ -789,8 +522,6 @@ const Apply = () => {
                 }}>
                     {step === 1 && renderStep1()}
                     {step === 2 && renderStep2()}
-                    {step === 3 && renderStep3()}
-                    {step === 4 && renderStep4()}
 
                     {/* Navigation Buttons */}
                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
@@ -798,23 +529,24 @@ const Apply = () => {
                             onClick={() => setStep(step - 1)}
                             disabled={step === 1}
                             style={{
-                                padding: "0.75rem 1.5rem",
+                                padding: "0.625rem 1.5rem",
                                 backgroundColor: step === 1 ? "#2d3448" : "#4a5568",
                                 color: step === 1 ? "#718096" : "white",
                                 border: "none",
                                 borderRadius: "8px",
                                 cursor: step === 1 ? "not-allowed" : "pointer",
-                                fontSize: "0.875rem"
+                                fontSize: "0.875rem",
+                                fontWeight: 600
                             }}
                         >
-                            Previous
+                            Back
                         </button>
 
-                        {step < 4 ? (
+                        {step < 2 ? (
                             <button
                                 onClick={() => setStep(step + 1)}
                                 style={{
-                                    padding: "0.75rem 1.5rem",
+                                    padding: "0.625rem 1.5rem",
                                     backgroundColor: "#3b6ef8",
                                     color: "white",
                                     border: "none",
@@ -824,7 +556,7 @@ const Apply = () => {
                                     fontWeight: 600
                                 }}
                             >
-                                Next
+                                Next Step
                             </button>
                         ) : (
                             <button

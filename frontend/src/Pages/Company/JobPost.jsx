@@ -7,7 +7,7 @@ const JobPost = () => {
         jobTitle: "",
         companyName: "",
         jobDescription: "",
-        qualifications: "",
+        CGPA: "",
         salary: "",
         jobType: "Full-time",
         location: "",
@@ -19,22 +19,28 @@ const JobPost = () => {
     const [postedJobs, setPostedJobs] = useState([]);
 
     useEffect(() => {
-        // Get current recruiter
+        // Get current recruiter identity
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
-            const user = JSON.parse(storedUser);
-            setRecruiter(user);
-            loadRecruiterJobs(user.id || user.email);
+            setRecruiter(JSON.parse(storedUser));
         }
+        loadRecruiterJobs();
     }, []);
 
-    const loadRecruiterJobs = (recruiterId) => {
-        const saved = localStorage.getItem("recruiter_jobs");
-        if (saved) {
-            const allJobs = JSON.parse(saved);
-            // Filter to only show jobs posted by this recruiter
-            const recruiterJobs = allJobs.filter(job => job.recruiterId === recruiterId);
-            setPostedJobs(recruiterJobs);
+    const loadRecruiterJobs = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+            
+            const res = await fetch("http://localhost:8000/api/recruiter/jobs/", {
+                headers: { "Authorization": `Token ${token}` }
+            });
+            if (res.ok) {
+                const jobs = await res.json();
+                setPostedJobs(jobs);
+            }
+        } catch (err) {
+            console.error("Failed to load jobs", err);
         }
     };
 
@@ -43,37 +49,55 @@ const JobPost = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const newJob = {
-            id: Date.now(),
-            ...formData,
-            recruiterId: recruiter.id || recruiter.email
-        };
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("http://localhost:8000/api/recruiter/jobs/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${token}`
+                },
+                body: JSON.stringify({
+                    job_title: formData.jobTitle,
+                    company_name: formData.companyName,
+                    job_description: formData.jobDescription,
+                    qualifications: formData.CGPA,
+                    salary: formData.salary.trim() === "" ? null : formData.salary,
+                    job_type: formData.jobType,
+                    location: formData.location,
+                    application_deadline: formData.applicationDeadline.trim() === "" ? null : formData.applicationDeadline
+                })
+            });
 
-        const allJobs = localStorage.getItem("recruiter_jobs");
-        const existingJobs = allJobs ? JSON.parse(allJobs) : [];
-        const updatedAllJobs = [...existingJobs, newJob];
-        localStorage.setItem("recruiter_jobs", JSON.stringify(updatedAllJobs));
+            if (!res.ok) {
+                const errorData = await res.text();
+                throw new Error(errorData);
+            }
 
-        // Update only current recruiter's jobs in state
-        setPostedJobs([...postedJobs, newJob]);
+            const newJob = await res.json();
+            setPostedJobs([newJob, ...postedJobs]);
 
-        setSubmitMessage("Job posted successfully! ✓");
-        setFormData({
-            jobTitle: "",
-            companyName: "",
-            jobDescription: "",
-            qualifications: "",
-            salary: "",
-            jobType: "Full-time",
-            location: "",
-            applicationDeadline: "",
-            postedDate: new Date().toISOString().split('T')[0]
-        });
+            setSubmitMessage("Job posted successfully! ✓");
+            setFormData({
+                jobTitle: "",
+                companyName: "",
+                jobDescription: "",
+                CGPA: "",
+                salary: "",
+                jobType: "Full-time",
+                location: "",
+                applicationDeadline: "",
+                postedDate: new Date().toISOString().split('T')[0]
+            });
 
-        setTimeout(() => setSubmitMessage(""), 3000);
+            setTimeout(() => setSubmitMessage(""), 3000);
+        } catch (err) {
+            console.error("Error posting job:", err);
+            setSubmitMessage(`Error: ${err.message}`);
+        }
     };
 
     return (
@@ -182,11 +206,12 @@ const JobPost = () => {
 
                                 <div style={{ marginBottom: "1.5rem" }}>
                                     <label style={{ display: "block", color: "#e2e8f0", marginBottom: "0.5rem", fontWeight: 500 }}>
-                                        Qualifications *
+                                        Required CGPA *
                                     </label>
-                                    <textarea
-                                        name="qualifications"
-                                        value={formData.qualifications}
+                                    <input
+                                        type="number"
+                                        name="CGPA"
+                                        value={formData.CGPA}
                                         onChange={handleInputChange}
                                         required
                                         style={{
@@ -196,11 +221,9 @@ const JobPost = () => {
                                             border: "1px solid #2d3448",
                                             borderRadius: "0.5rem",
                                             color: "#e2e8f0",
-                                            fontSize: "0.95rem",
-                                            minHeight: "80px",
-                                            fontFamily: "inherit"
+                                            fontSize: "0.95rem"
                                         }}
-                                        placeholder="Required qualifications and skills"
+                                        placeholder="e.g., 7.5"
                                     />
                                 </div>
 
@@ -215,7 +238,6 @@ const JobPost = () => {
                                             value={formData.salary}
                                             onChange={handleInputChange}
                                             required
-                                            step="0.1"
                                             style={{
                                                 width: "100%",
                                                 padding: "0.75rem",
@@ -286,6 +308,13 @@ const JobPost = () => {
                                         name="applicationDeadline"
                                         value={formData.applicationDeadline}
                                         onChange={handleInputChange}
+                                        onClick={(e) => {
+                                            try {
+                                                e.target.showPicker();
+                                            } catch (err) {
+                                                // ignore if browser doesn't support showPicker
+                                            }
+                                        }}
                                         required
                                         style={{
                                             width: "100%",
@@ -294,7 +323,8 @@ const JobPost = () => {
                                             border: "1px solid #2d3448",
                                             borderRadius: "0.5rem",
                                             color: "#e2e8f0",
-                                            fontSize: "0.95rem"
+                                            fontSize: "0.95rem",
+                                            cursor: "pointer"
                                         }}
                                     />
                                 </div>
@@ -359,9 +389,9 @@ const JobPost = () => {
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.75rem" }}>
                                         <div>
                                             <h3 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#e2e8f0", marginBottom: "0.25rem" }}>
-                                                {job.jobTitle}
+                                                {job.job_title}
                                             </h3>
-                                            <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>{job.companyName}</p>
+                                            <p style={{ fontSize: "0.875rem", color: "#a0aec0" }}>{job.company_name}</p>
                                         </div>
                                         <span style={{
                                             padding: "0.25rem 0.75rem",
@@ -375,13 +405,13 @@ const JobPost = () => {
                                         </span>
                                     </div>
                                     <p style={{ fontSize: "0.875rem", color: "#a0aec0", marginBottom: "1rem" }}>
-                                        {job.location} • ₹{job.salary} LPA • {job.jobType}
+                                        {job.location} • ₹{job.salary} LPA • {job.job_type}
                                     </p>
                                     <p style={{ fontSize: "0.875rem", color: "#718096", lineHeight: "1.5" }}>
-                                        {job.jobDescription.substring(0, 150)}...
+                                        {job.job_description && job.job_description.substring(0, 150)}...
                                     </p>
                                     <p style={{ fontSize: "0.75rem", color: "#718096", marginTop: "1rem" }}>
-                                        Posted: {job.postedDate} • Deadline: {job.applicationDeadline}
+                                        Posted: {job.posted_date} • Deadline: {job.application_deadline}
                                     </p>
                                 </div>
                             )) : (

@@ -1,7 +1,10 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
+router = DefaultRouter()
+router.register(r'jobs', views.JobPostingViewSet, basename='job')
+
 urlpatterns = [
-    path('post-job/', views.post_job_view, name='recruiter-post-job'),
-    path('applicants/', views.applicants_view, name='recruiter-applicants'),
+    path('', include(router.urls)),
 ]

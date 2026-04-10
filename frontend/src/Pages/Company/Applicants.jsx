@@ -3,12 +3,11 @@ import RecruiterSidebar from "../../Components/layouts/RecruiterSidebar";
 
 const Applicants = () => {
     const [recruiter, setRecruiter] = useState(null);
+    const [jobs, setJobs] = useState([]);
     const [applicants, setApplicants] = useState([]);
-    const [filters, setFilters] = useState({
-        status: "all",
-        jobRole: "all",
-        searchQuery: ""
-    });
+    const [selectedJob, setSelectedJob] = useState(null);
+    
+    // Detailed applicant view modal
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
@@ -18,81 +17,31 @@ const Applicants = () => {
         if (storedUser) {
             const user = JSON.parse(storedUser);
             setRecruiter(user);
+            loadJobs();
             loadApplicants();
         }
     }, []);
 
-    const loadApplicants = () => {
-        // Sample applicants data
-        const sampleApplicants = [
-            {
-                id: 1,
-                name: "Rajesh Kumar",
-                email: "rajesh@example.com",
-                phone: "+91-9876543210",
-                jobRole: "Software Engineer",
-                status: "Shortlisted",
-                appliedDate: "2026-03-18",
-                cgpa: 3.8,
-                skills: ["Java", "Spring Boot", "SQL", "AWS"],
-                experience: "2 years",
-                resumeUrl: "#"
-            },
-            {
-                id: 2,
-                name: "Priya Sharma",
-                email: "priya@example.com",
-                phone: "+91-9876543211",
-                jobRole: "Data Analyst",
-                status: "Under Review",
-                appliedDate: "2026-03-17",
-                cgpa: 3.9,
-                skills: ["Python", "SQL", "Tableau", "Excel"],
-                experience: "1 year",
-                resumeUrl: "#"
-            },
-            {
-                id: 3,
-                name: "Amit Patel",
-                email: "amit@example.com",
-                phone: "+91-9876543212",
-                jobRole: "Frontend Developer",
-                status: "Interview Scheduled",
-                appliedDate: "2026-03-16",
-                cgpa: 3.7,
-                skills: ["React", "JavaScript", "CSS", "TypeScript"],
-                experience: "1.5 years",
-                resumeUrl: "#"
-            },
-            {
-                id: 4,
-                name: "Neha Singh",
-                email: "neha@example.com",
-                phone: "+91-9876543213",
-                jobRole: "Software Engineer",
-                status: "Applied",
-                appliedDate: "2026-03-15",
-                cgpa: 3.6,
-                skills: ["Python", "JavaScript", "Django", "React"],
-                experience: "0.5 years",
-                resumeUrl: "#"
-            },
-            {
-                id: 5,
-                name: "Vikram Reddy",
-                email: "vikram@example.com",
-                phone: "+91-9876543214",
-                jobRole: "Data Analyst",
-                status: "Rejected",
-                appliedDate: "2026-03-14",
-                cgpa: 3.2,
-                skills: ["Excel", "Python", "Power BI"],
-                experience: "0 years",
-                resumeUrl: "#"
+    const loadJobs = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return;
+            const res = await fetch("http://localhost:8000/api/recruiter/jobs/", {
+                headers: { "Authorization": `Token ${token}` }
+            });
+            if (res.ok) {
+                setJobs(await res.json());
             }
-        ];
+        } catch (err) {
+            console.error("Failed to load jobs", err);
+        }
+    };
 
-        setApplicants(sampleApplicants);
+    const loadApplicants = () => {
+        // Load applicants from localStorage (in real app, fetch from backend)
+        const savedApplicants = localStorage.getItem("applicants");
+        const applicantsList = savedApplicants ? JSON.parse(savedApplicants) : [];
+        setApplicants(applicantsList);
     };
 
     const getStatusColor = (status) => {
@@ -114,174 +63,171 @@ const Applicants = () => {
         setShowDetailModal(false);
     };
 
-    const filteredApplicants = applicants.filter(app => {
-        const matchStatus = filters.status === "all" || app.status === filters.status;
-        const matchRole = filters.jobRole === "all" || app.jobRole === filters.jobRole;
-        const matchSearch = app.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) ||
-                          app.email.toLowerCase().includes(filters.searchQuery.toLowerCase());
-        return matchStatus && matchRole && matchSearch;
-    });
-
-    const uniqueRoles = [...new Set(applicants.map(a => a.jobRole))];
+    // When a job is selected, show only applicants for that job role
+    const filteredApplicants = selectedJob 
+        ? applicants.filter(app => app.jobRole === selectedJob.job_title)
+        : [];
 
     return (
         <div style={{ minHeight: "100vh", backgroundColor: "#0f1117", display: "flex" }}>
             <RecruiterSidebar />
 
             <main style={{ flex: 1, marginLeft: "260px", padding: "2rem" }}>
-                <div style={{ marginBottom: "2rem" }}>
-                    <h1 style={{ fontSize: "1.875rem", fontWeight: 700, color: "#e2e8f0", marginBottom: "0.5rem" }}>
-                        Applicants
-                    </h1>
-                    <p style={{ color: "#718096" }}>Review and manage applications from candidates.</p>
-                </div>
-
-                {/* Filters */}
-                <div style={{ backgroundColor: "#1a1f2e", borderRadius: "0.75rem", padding: "1.5rem", border: "1px solid #2d3448", marginBottom: "2rem" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
-                        <div>
-                            <label style={{ display: "block", color: "#e2e8f0", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 500 }}>
-                                Search
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="Search by name or email..."
-                                value={filters.searchQuery}
-                                onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-                                style={{
-                                    width: "100%",
-                                    padding: "0.75rem",
-                                    backgroundColor: "#242938",
-                                    border: "1px solid #2d3448",
-                                    borderRadius: "0.5rem",
-                                    color: "#e2e8f0",
-                                    fontSize: "0.95rem"
-                                }}
-                            />
+                {!selectedJob ? (
+                    <div>
+                        <div style={{ marginBottom: "2rem" }}>
+                            <h1 style={{ fontSize: "1.875rem", fontWeight: 700, color: "#e2e8f0", marginBottom: "0.5rem" }}>
+                                Listed Jobs
+                            </h1>
+                            <p style={{ color: "#718096" }}>Select a job to view its applicants.</p>
                         </div>
-                        <div>
-                            <label style={{ display: "block", color: "#e2e8f0", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 500 }}>
-                                Job Role
-                            </label>
-                            <select
-                                value={filters.jobRole}
-                                onChange={(e) => setFilters({ ...filters, jobRole: e.target.value })}
-                                style={{
-                                    width: "100%",
-                                    padding: "0.75rem",
-                                    backgroundColor: "#242938",
-                                    border: "1px solid #2d3448",
-                                    borderRadius: "0.5rem",
-                                    color: "#e2e8f0",
-                                    fontSize: "0.95rem"
-                                }}
-                            >
-                                <option value="all">All Roles</option>
-                                {uniqueRoles.map(role => (
-                                    <option key={role} value={role}>{role}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label style={{ display: "block", color: "#e2e8f0", marginBottom: "0.5rem", fontSize: "0.875rem", fontWeight: 500 }}>
-                                Status
-                            </label>
-                            <select
-                                value={filters.status}
-                                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                                style={{
-                                    width: "100%",
-                                    padding: "0.75rem",
-                                    backgroundColor: "#242938",
-                                    border: "1px solid #2d3448",
-                                    borderRadius: "0.5rem",
-                                    color: "#e2e8f0",
-                                    fontSize: "0.95rem"
-                                }}
-                            >
-                                <option value="all">All Status</option>
-                                <option value="Applied">Applied</option>
-                                <option value="Under Review">Under Review</option>
-                                <option value="Shortlisted">Shortlisted</option>
-                                <option value="Interview Scheduled">Interview Scheduled</option>
-                                <option value="Offer Extended">Offer Extended</option>
-                                <option value="Rejected">Rejected</option>
-                            </select>
+                        
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "1.5rem" }}>
+                            {jobs.map(job => {
+                                const jobApplicantsCount = applicants.filter(a => a.jobRole === job.job_title).length;
+                                return (
+                                    <div
+                                        key={job.id}
+                                        onClick={() => setSelectedJob(job)}
+                                        style={{
+                                            backgroundColor: "#1a1f2e",
+                                            borderRadius: "0.75rem",
+                                            padding: "1.5rem",
+                                            border: "1px solid #2d3448",
+                                            cursor: "pointer",
+                                            transition: "transform 0.2s, box-shadow 0.2s"
+                                        }}
+                                        onMouseEnter={e => {
+                                            e.currentTarget.style.transform = "translateY(-4px)";
+                                            e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+                                        }}
+                                        onMouseLeave={e => {
+                                            e.currentTarget.style.transform = "translateY(0)";
+                                            e.currentTarget.style.boxShadow = "none";
+                                        }}
+                                    >
+                                        <h3 style={{ color: "#e2e8f0", fontSize: "1.25rem", marginBottom: "0.5rem" }}>{job.job_title}</h3>
+                                        <p style={{ color: "#a0aec0", fontSize: "0.875rem", marginBottom: "1rem" }}>{job.company_name} • {job.location}</p>
+                                        
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                            <span style={{ color: "#48bb78", fontWeight: 600, fontSize: "0.875rem" }}>{job.salary} LPA</span>
+                                            <span style={{ 
+                                                backgroundColor: "#2d3448", 
+                                                padding: "0.25rem 0.75rem", 
+                                                borderRadius: "9999px", 
+                                                color: "#e2e8f0", 
+                                                fontSize: "0.75rem",
+                                                fontWeight: 600 
+                                            }}>
+                                                {jobApplicantsCount} Applicants
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {jobs.length === 0 && (
+                                <div style={{ color: "#718096", gridColumn: "1 / -1", textAlign: "center", padding: "3rem" }}>
+                                    No jobs listed yet. Create a job posting to see it here.
+                                </div>
+                            )}
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <div>
+                        <div style={{ marginBottom: "2rem", display: "flex", alignItems: "center", gap: "1.5rem" }}>
+                            <button
+                                onClick={() => setSelectedJob(null)}
+                                style={{
+                                    padding: "0.5rem 1rem",
+                                    backgroundColor: "#2d3448",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    cursor: "pointer",
+                                    fontSize: "0.875rem",
+                                    fontWeight: 500
+                                }}
+                            >
+                                ← Back to Jobs
+                            </button>
+                            <div>
+                                <h1 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#e2e8f0" }}>
+                                    Applicants for {selectedJob.job_title}
+                                </h1>
+                            </div>
+                        </div>
 
-                {/* Applicants Table */}
-                <div style={{ backgroundColor: "#1a1f2e", borderRadius: "0.75rem", border: "1px solid #2d3448", overflow: "hidden" }}>
-                    <div style={{ overflowX: "auto" }}>
-                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                            <thead>
-                                <tr style={{ borderBottom: "1px solid #2d3448" }}>
-                                    <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Name</th>
-                                    <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Email</th>
-                                    <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Job Role</th>
-                                    <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>CGPA</th>
-                                    <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Status</th>
-                                    <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Applied</th>
-                                    <th style={{ padding: "1rem", textAlign: "center", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredApplicants.map(applicant => {
-                                    const statusColor = getStatusColor(applicant.status);
-                                    return (
-                                        <tr key={applicant.id} style={{ borderBottom: "1px solid #2d3448", backgroundColor: "#1a1f2e" }}>
-                                            <td style={{ padding: "1rem", color: "#e2e8f0", fontWeight: 500 }}>{applicant.name}</td>
-                                            <td style={{ padding: "1rem", color: "#a0aec0", fontSize: "0.875rem" }}>{applicant.email}</td>
-                                            <td style={{ padding: "1rem", color: "#a0aec0", fontSize: "0.875rem" }}>{applicant.jobRole}</td>
-                                            <td style={{ padding: "1rem", color: "#e2e8f0" }}>{applicant.cgpa}</td>
-                                            <td style={{ padding: "1rem" }}>
-                                                <span style={{
-                                                    padding: "0.25rem 0.75rem",
-                                                    backgroundColor: statusColor.bg,
-                                                    color: statusColor.text,
-                                                    borderRadius: "9999px",
-                                                    fontSize: "0.75rem",
-                                                    fontWeight: 600
-                                                }}>
-                                                    {applicant.status}
-                                                </span>
-                                            </td>
-                                            <td style={{ padding: "1rem", color: "#a0aec0", fontSize: "0.875rem" }}>{applicant.appliedDate}</td>
-                                            <td style={{ padding: "1rem", textAlign: "center" }}>
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedApplicant(applicant);
-                                                        setShowDetailModal(true);
-                                                    }}
-                                                    style={{
-                                                        padding: "0.5rem 1rem",
-                                                        backgroundColor: "#e67e22",
-                                                        color: "white",
-                                                        border: "none",
-                                                        borderRadius: "0.375rem",
-                                                        cursor: "pointer",
-                                                        fontSize: "0.875rem",
-                                                        fontWeight: 500,
-                                                        transition: "opacity 0.2s"
-                                                    }}
-                                                    onMouseEnter={e => e.currentTarget.style.opacity = "0.9"}
-                                                    onMouseLeave={e => e.currentTarget.style.opacity = "1"}
-                                                >
-                                                    View
-                                                </button>
-                                            </td>
+                        {/* Applicants Table */}
+                        <div style={{ backgroundColor: "#1a1f2e", borderRadius: "0.75rem", border: "1px solid #2d3448", overflow: "hidden" }}>
+                            <div style={{ overflowX: "auto" }}>
+                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                    <thead>
+                                        <tr style={{ borderBottom: "1px solid #2d3448" }}>
+                                            <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Name</th>
+                                            <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Email</th>
+                                            <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>CGPA</th>
+                                            <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Status</th>
+                                            <th style={{ padding: "1rem", textAlign: "left", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Applied</th>
+                                            <th style={{ padding: "1rem", textAlign: "center", color: "#a0aec0", fontWeight: 600, fontSize: "0.875rem" }}>Action</th>
                                         </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                    </thead>
+                                    <tbody>
+                                        {filteredApplicants.map(applicant => {
+                                            const statusColor = getStatusColor(applicant.status);
+                                            return (
+                                                <tr key={applicant.id} style={{ borderBottom: "1px solid #2d3448", backgroundColor: "#1a1f2e" }}>
+                                                    <td style={{ padding: "1rem", color: "#e2e8f0", fontWeight: 500 }}>{applicant.name}</td>
+                                                    <td style={{ padding: "1rem", color: "#a0aec0", fontSize: "0.875rem" }}>{applicant.email}</td>
+                                                    <td style={{ padding: "1rem", color: "#e2e8f0" }}>{applicant.cgpa}</td>
+                                                    <td style={{ padding: "1rem" }}>
+                                                        <span style={{
+                                                            padding: "0.25rem 0.75rem",
+                                                            backgroundColor: statusColor.bg,
+                                                            color: statusColor.text,
+                                                            borderRadius: "9999px",
+                                                            fontSize: "0.75rem",
+                                                            fontWeight: 600
+                                                        }}>
+                                                            {applicant.status}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{ padding: "1rem", color: "#a0aec0", fontSize: "0.875rem" }}>{applicant.appliedDate}</td>
+                                                    <td style={{ padding: "1rem", textAlign: "center" }}>
+                                                        <button
+                                                            onClick={() => {
+                                                                setSelectedApplicant(applicant);
+                                                                setShowDetailModal(true);
+                                                            }}
+                                                            style={{
+                                                                padding: "0.5rem 1rem",
+                                                                backgroundColor: "#3b6ef8",
+                                                                color: "white",
+                                                                border: "none",
+                                                                borderRadius: "0.375rem",
+                                                                cursor: "pointer",
+                                                                fontSize: "0.875rem",
+                                                                fontWeight: 500,
+                                                                transition: "opacity 0.2s"
+                                                            }}
+                                                            onMouseEnter={e => e.currentTarget.style.opacity = "0.9"}
+                                                            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+                                                        >
+                                                            View Profile
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-                {filteredApplicants.length === 0 && (
-                    <div style={{ textAlign: "center", padding: "3rem", color: "#718096" }}>
-                        <p>No applicants found matching your filters.</p>
+                        {filteredApplicants.length === 0 && (
+                            <div style={{ textAlign: "center", padding: "3rem", color: "#718096" }}>
+                                <p>No applicants for this job yet.</p>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -333,9 +279,6 @@ const Applicants = () => {
                                 </p>
                                 <p style={{ color: "#a0aec0", marginBottom: "0.5rem" }}>
                                     <strong style={{ color: "#e2e8f0" }}>Phone:</strong> {selectedApplicant.phone}
-                                </p>
-                                <p style={{ color: "#a0aec0", marginBottom: "0.5rem" }}>
-                                    <strong style={{ color: "#e2e8f0" }}>Job Role:</strong> {selectedApplicant.jobRole}
                                 </p>
                                 <p style={{ color: "#a0aec0", marginBottom: "0.5rem" }}>
                                     <strong style={{ color: "#e2e8f0" }}>CGPA:</strong> {selectedApplicant.cgpa}

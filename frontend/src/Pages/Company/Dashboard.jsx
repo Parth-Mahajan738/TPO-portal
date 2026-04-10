@@ -22,19 +22,23 @@ const RecruiterDashboard = () => {
         }
     }, []);
 
-    const loadDashboardData = (recruiterId) => {
-        // Load only this recruiter's jobs
-        const savedJobs = localStorage.getItem("recruiter_jobs");
-        const allJobs = savedJobs ? JSON.parse(savedJobs) : [];
-        const recruiterJobs = allJobs.filter(job => job.recruiterId === recruiterId);
-
-        // Sample data for demonstration
-        const sampleApplications = [
-            { id: 1, studentName: "Rajesh Kumar", jobRole: "Software Engineer", status: "Shortlisted", appliedDate: "2026-03-18" },
-            { id: 2, studentName: "Priya Sharma", jobRole: "Data Analyst", status: "Under Review", appliedDate: "2026-03-17" },
-            { id: 3, studentName: "Amit Patel", jobRole: "Frontend Developer", status: "Rejected", appliedDate: "2026-03-16" },
-            { id: 4, studentName: "Neha Singh", jobRole: "Software Engineer", status: "Interview Scheduled", appliedDate: "2026-03-15" }
-        ];
+    const loadDashboardData = async (recruiterId) => {
+        // Load only this recruiter's jobs from Backend
+        let activeJobsCount = 0;
+        try {
+            const token = localStorage.getItem("token");
+            if (token) {
+                const res = await fetch("http://localhost:8000/api/recruiter/jobs/", {
+                    headers: { "Authorization": `Token ${token}` }
+                });
+                if (res.ok) {
+                    const recruiterJobs = await res.json();
+                    activeJobsCount = recruiterJobs.length;
+                }
+            }
+        } catch (e) {
+            console.error("Failed to load recruiter jobs stats", e);
+        }
 
         // Load only this recruiter's events
         const savedEvents = localStorage.getItem("recruiter_events");
@@ -42,13 +46,13 @@ const RecruiterDashboard = () => {
         const recruiterEvents = allEvents.filter(event => event.recruiterId === recruiterId);
 
         setStats({
-            activeJobs: recruiterJobs.length,
-            totalApplications: sampleApplications.length,
-            shortlistedCandidates: sampleApplications.filter(a => ["Shortlisted", "Interview Scheduled"].includes(a.status)).length,
-            offersExtended: sampleApplications.filter(a => a.status === "Offer Extended").length
+            activeJobs: activeJobsCount,
+            totalApplications: 0,
+            shortlistedCandidates: 0,
+            offersExtended: 0
         });
 
-        setRecentApplications(sampleApplications);
+        setRecentApplications([]);
         setUpcomingEvents(recruiterEvents.slice(0, 3));
     };
 
